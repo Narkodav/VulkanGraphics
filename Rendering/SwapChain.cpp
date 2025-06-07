@@ -1,15 +1,17 @@
 #include "SwapChain.h"
 
-SwapChain::SwapChain(const EngineContext& instance, const EngineDevice& device, const Window& window,
-    const RenderPass& renderPass, const SwapChainFormat& format) {
-    init(instance, device, window, renderPass, format);
+SwapChain::SwapChain(const EngineContext& instance, const Device& device, const Window& window,
+    const RenderPass& renderPass, const SwapChainFormat& format, 
+    uint32_t presentQueueIndex, uint32_t workerQueueIndex) {
+    init(instance, device, window, renderPass, format, presentQueueIndex, workerQueueIndex);
 }
 
-void SwapChain::init(const EngineContext& instance, const EngineDevice& device, const Window& window,
-    const RenderPass& renderPass, const SwapChainFormat& format)
+void SwapChain::init(const EngineContext& instance, const Device& device, const Window& window,
+    const RenderPass& renderPass, const SwapChainFormat& format, 
+    uint32_t presentQueueIndex, uint32_t workerQueueIndex)
 {
     m_activeSwapChainFormat = format;
-    auto supportDetails = device.getSwapChainSupportDetails();
+    auto supportDetails = device.getPhysicalDevice().getSwapChainSupportDetails(instance, window);
 
     m_imageCount = supportDetails.capabilities.minImageCount + 1;
     auto d = supportDetails.capabilities.currentTransform;
@@ -17,7 +19,8 @@ void SwapChain::init(const EngineContext& instance, const EngineDevice& device, 
         m_imageCount = supportDetails.capabilities.maxImageCount;
     }
 
-    m_swapChain = createSwapChain(instance, device, window, m_activeSwapChainFormat, m_imageCount);
+    m_swapChain = createSwapChain(instance, device, supportDetails, window,
+        m_activeSwapChainFormat, m_imageCount, presentQueueIndex, workerQueueIndex);
     m_swapChainImages = getSwapChainImages(instance, device, m_swapChain, m_imageCount);
     m_swapChainImageViews = createImageViews(instance, device, m_activeSwapChainFormat, m_swapChainImages);
     
@@ -32,16 +35,17 @@ void SwapChain::init(const EngineContext& instance, const EngineDevice& device, 
     m_initialized = true;
 }
 
-void SwapChain::recreate(const EngineContext& instance, const EngineDevice& device, const Window& window,
-    const RenderPass& renderPass, const SwapChainFormat& format)
+void SwapChain::recreate(const EngineContext& instance, const Device& device, const Window& window,
+    const RenderPass& renderPass, const SwapChainFormat& format, uint32_t presentQueueIndex, uint32_t workerQueueIndex)
 {
     destroy(instance, device);
-    init(instance, device, window, renderPass, format);
+    init(instance, device, window, renderPass, format, presentQueueIndex, workerQueueIndex);
 }
 
 vk::SwapchainKHR SwapChain::createSwapChain(const EngineContext& instance,
-    const EngineDevice& device, const Window& window,
-    const SwapChainFormat& activeSwapChainFormat, uint32_t imageCount)
+    const Device& device, const SwapChainSupportDetails& swapChainSupportDetails, 
+    const Window& window, const SwapChainFormat& activeSwapChainFormat, uint32_t imageCount, 
+    uint32_t presentQueueIndex, uint32_t workerQueueIndex)
 {
     vk::SwapchainCreateInfoKHR createInfo{};
     createInfo.sType = vk::StructureType::eSwapchainCreateInfoKHR;
@@ -52,23 +56,18 @@ vk::SwapchainKHR SwapChain::createSwapChain(const EngineContext& instance,
     createInfo.imageExtent = activeSwapChainFormat.getSwapChainExtent();
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = vk::ImageUsageFlagBits::eColorAttachment;
-
-    BasicRenderingQueueFamilyIndices indices = device.getBasicIndices();
-    uint32_t queueFamilyIndices[] = { indices.families[static_cast<size_t>(QueueSpecialisation::GRAPHICS)].value(),
-    indices.families[static_cast<size_t>(QueueSpecialisation::PRESENT)].value() };
-
-    if (indices.families[static_cast<size_t>(QueueSpecialisation::GRAPHICS)].value() !=
-        indices.families[static_cast<size_t>(QueueSpecialisation::PRESENT)].value()) {
+    std::array<uint32_t, 2> queueFamilyIndices = { presentQueueIndex, workerQueueIndex };
+    if (presentQueueIndex != workerQueueIndex) {
         createInfo.imageSharingMode = vk::SharingMode::eConcurrent;
-        createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = queueFamilyIndices;
+        createInfo.queueFamilyIndexCount = queueFamilyIndices.size();
+        createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
     }
     else {
         createInfo.imageSharingMode = vk::SharingMode::eExclusive;
         createInfo.queueFamilyIndexCount = 0; // Optional
         createInfo.pQueueFamilyIndices = nullptr; // Optional
     }
-    createInfo.preTransform = device.getSwapChainSupportDetails().capabilities.currentTransform;
+    createInfo.preTransform = swapChainSupportDetails.capabilities.currentTransform;
     createInfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
     createInfo.presentMode = activeSwapChainFormat.getPresentMode();
     createInfo.clipped = VK_TRUE;
@@ -85,7 +84,7 @@ vk::SwapchainKHR SwapChain::createSwapChain(const EngineContext& instance,
 }
 
 std::vector<vk::Image> SwapChain::getSwapChainImages(const EngineContext& instance,
-    const EngineDevice& device,const vk::SwapchainKHR& swapChain, uint32_t& imageCount)
+    const Device& device,const vk::SwapchainKHR& swapChain, uint32_t& imageCount)
 {
     std::vector<vk::Image> swapChainImages(imageCount);
 
@@ -103,7 +102,7 @@ std::vector<vk::Image> SwapChain::getSwapChainImages(const EngineContext& instan
 }
 
 std::vector<vk::ImageView> SwapChain::createImageViews(const EngineContext& instance,
-    const EngineDevice& device, const SwapChainFormat& activeSwapChainFormat,
+    const Device& device, const SwapChainFormat& activeSwapChainFormat,
     const std::vector<vk::Image>& swapChainImages)
 {
     std::vector<vk::ImageView> imageViews(swapChainImages.size());
@@ -140,7 +139,7 @@ std::vector<vk::ImageView> SwapChain::createImageViews(const EngineContext& inst
 }
 
 std::vector<vk::Framebuffer> SwapChain::createFrameBuffers(const EngineContext& instance,
-    const EngineDevice& device, const RenderPass& renderPass,
+    const Device& device, const RenderPass& renderPass,
     const std::vector<vk::ImageView>& imageViews, const SwapChainFormat& format)
 {
     std::vector<vk::Framebuffer> framebuffers(imageViews.size());
@@ -173,7 +172,7 @@ std::vector<vk::Framebuffer> SwapChain::createFrameBuffers(const EngineContext& 
 }
 
 std::vector<vk::Framebuffer> SwapChain::createFrameBuffers(const EngineContext& instance,
-    const EngineDevice& device, const RenderPass& renderPass,
+    const Device& device, const RenderPass& renderPass,
     const std::vector<vk::ImageView>& imageViews, vk::ImageView depthImageView,
     const SwapChainFormat& format)
 {
@@ -207,7 +206,7 @@ std::vector<vk::Framebuffer> SwapChain::createFrameBuffers(const EngineContext& 
 }
 
 void SwapChain::initDepthImage(const EngineContext& instance,
-    const EngineDevice& device)
+    const Device& device)
 {
     vk::ImageCreateInfo imageInfo{};
     imageInfo.sType = vk::StructureType::eImageCreateInfo;

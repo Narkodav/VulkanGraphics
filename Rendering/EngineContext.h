@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.h"
+#include "Flags.h"
 #include "PlatformManagement/PlatformContext.h"
 
 class EngineContext
@@ -8,13 +9,18 @@ private:
     std::string m_engineName;
     std::string m_appName;
     vk::Instance m_instance;
-    vk::DebugUtilsMessengerEXT m_debugMessenger;
     EngineContext** m_enginePointer = nullptr;
     mutable vk::detail::DispatchLoaderDynamic m_dispatchLoader;
 
     bool m_initialized = false;
 
     static inline std::set<std::string> activeEngines;
+
+    //DebugRelated
+#ifdef _DEBUG
+    DebugMessageSeverity::Flags m_debugMessageSeveritySettings;
+    vk::DebugUtilsMessengerEXT m_debugMessenger;
+#endif
 
 public:
     static inline const std::vector<const char*> validationLayers = {
@@ -31,9 +37,15 @@ public:
 
 public:
 
-    EngineContext() : m_instance(nullptr), m_debugMessenger(nullptr) {};
+    EngineContext() : m_instance(nullptr) 
+#ifdef _DEBUG
+    ,  m_debugMessenger(nullptr)
+#endif
+    {};
+
     EngineContext(const std::string& engineName, const std::string& appName,
-        Version engineVersion, Version appVersion);
+        Version engineVersion, Version appVersion,
+        DebugMessageSeverity::Flags debugMessageSeveritySettings = DebugMessageSeverity::Bits::ALL);
 
     EngineContext(EngineContext&& other) noexcept
     {
@@ -42,7 +54,10 @@ public:
         m_enginePointer = std::exchange(other.m_enginePointer, nullptr);
         *m_enginePointer = this;
         m_instance = std::exchange(other.m_instance, vk::Instance());
+#ifdef _DEBUG
         m_debugMessenger = std::exchange(other.m_debugMessenger, vk::DebugUtilsMessengerEXT());
+        m_debugMessageSeveritySettings = std::exchange(other.m_debugMessageSeveritySettings, DebugMessageSeverity::Bits::ALL);
+#endif
         m_dispatchLoader = std::exchange(other.m_dispatchLoader, vk::detail::DispatchLoaderDynamic());
         m_initialized = std::exchange(other.m_initialized, false);
     };
@@ -60,7 +75,10 @@ public:
         m_enginePointer = std::exchange(other.m_enginePointer, nullptr);
         *m_enginePointer = this;
         m_instance = std::exchange(other.m_instance, vk::Instance());
+#ifdef _DEBUG
         m_debugMessenger = std::exchange(other.m_debugMessenger, vk::DebugUtilsMessengerEXT());
+        m_debugMessageSeveritySettings = std::exchange(other.m_debugMessageSeveritySettings, DebugMessageSeverity::Bits::ALL);
+#endif
         m_dispatchLoader = std::exchange(other.m_dispatchLoader, vk::detail::DispatchLoaderDynamic());
         m_initialized = std::exchange(other.m_initialized, false);
 
@@ -76,7 +94,13 @@ public:
 
     const std::string& getEngineName() const { return m_engineName; };
     const std::string& getAppName() const { return m_appName; };
-    const vk::DebugUtilsMessengerEXT& getDebugManager() const { return m_debugMessenger; };
+    const vk::DebugUtilsMessengerEXT& getDebugManager() const { 
+#ifdef _DEBUG
+        return m_debugMessenger;
+#else
+        return vk::DebugUtilsMessengerEXT();
+#endif
+    };
     const vk::detail::DispatchLoaderDynamic& getDispatchLoader() const { return m_dispatchLoader; };
     const vk::Instance& getInstance() const { return m_instance; };
 
@@ -93,6 +117,8 @@ public:
         vk::DebugUtilsMessageTypeFlagsEXT messageType,
         const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* pUserData);
+
+    void setDebugSeverityThreshold(DebugMessageSeverity::Flags severitySettings);
 
 private:
 

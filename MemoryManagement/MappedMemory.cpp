@@ -1,6 +1,6 @@
 #include "MappedMemory.h"
 
-MappedMemory::MappedMemory(const EngineContext& instance, const EngineDevice& device,
+MappedMemory::MappedMemory(const EngineContext& instance, const Device& device,
     const vk::MemoryRequirements& memRequirements, MemoryProperty::Flags memoryProperties,
     size_t capacity) :
     m_memoryProperties(memoryProperties), m_capacity(capacity)
@@ -20,7 +20,7 @@ MappedMemory::MappedMemory(const EngineContext& instance, const EngineDevice& de
     m_initialized = true;
 }
 
-bool MappedMemory::bindBuffer(const EngineContext& instance, const EngineDevice& device, const Buffer& buffer, size_t offset) {
+bool MappedMemory::bindBuffer(const EngineContext& instance, const Device& device, const Buffer& buffer, size_t offset) {
     if (!m_initialized)
         return false;
 
@@ -31,7 +31,7 @@ bool MappedMemory::bindBuffer(const EngineContext& instance, const EngineDevice&
     return true;
 }
 
-bool MappedMemory::bindImage(const EngineContext& instance, const EngineDevice& device,
+bool MappedMemory::bindImage(const EngineContext& instance, const Device& device,
     const Image& image, size_t offset /*= 0*/)
 {
     if (!m_initialized)

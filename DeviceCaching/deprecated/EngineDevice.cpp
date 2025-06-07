@@ -1,13 +1,11 @@
-#include "EngineDevice.h"
+#include "Device.h"
 
-
-
-bool EngineDevice::evaluateDevice(vk::PhysicalDevice device, const EngineContext& instance, const Window& window,
+bool Device::evaluateDevice(vk::PhysicalDevice device, const EngineContext& instance, const Window& window,
 	BasicRenderingQueueFamilyIndices& basicIndices, SwapChainSupportDetails& swapChainSupportDetails) {
-	auto deviceFeatures = device.getFeatures();
-	auto deviceProperties = device.getProperties();
+	auto deviceFeatures = device.getFeatures(instance.getDispatchLoader());
+	auto deviceProperties = device.getProperties(instance.getDispatchLoader());
 	auto deviceExtensions = device.enumerateDeviceExtensionProperties();
-	auto deviceQueueFamilyProperties = device.getQueueFamilyProperties();
+	auto deviceQueueFamilyProperties = device.getQueueFamilyProperties(instance.getDispatchLoader());
 	BasicRenderingQueueFamilyIndices indices;
 
 	int i = 0;
@@ -66,7 +64,7 @@ bool EngineDevice::evaluateDevice(vk::PhysicalDevice device, const EngineContext
 	return true;
 }
 
-void EngineDevice::selectPhysicalDevice(const EngineContext& instance,
+void Device::selectPhysicalDevice(const EngineContext& instance,
 	const Window& window)
 {
 	uint32_t deviceCount = 0;
@@ -87,7 +85,7 @@ void EngineDevice::selectPhysicalDevice(const EngineContext& instance,
 	}
 }
 
-void EngineDevice::createLogicalDevice(const EngineContext& instance,
+void Device::createLogicalDevice(const EngineContext& instance,
 	const Window& window)
 {
 	std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
@@ -117,6 +115,10 @@ void EngineDevice::createLogicalDevice(const EngineContext& instance,
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
 	createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
+	vk::PhysicalDeviceBufferDeviceAddressFeatures f;
+
+	
+
 #ifdef _DEBUG
 	createInfo.enabledLayerCount = static_cast<uint32_t>(EngineContext::validationLayers.size());
 	createInfo.ppEnabledLayerNames = EngineContext::validationLayers.data();
@@ -143,7 +145,7 @@ void EngineDevice::createLogicalDevice(const EngineContext& instance,
 			0, instance.getDispatchLoader());
 }
 
-vk::DeviceMemory EngineDevice::allocateMemory(const EngineContext& instance,
+vk::DeviceMemory Device::allocateMemory(const EngineContext& instance,
 	size_t requiredCapacity, uint32_t memoryType) const
 {
 	vk::MemoryAllocateInfo allocInfo{};
@@ -162,7 +164,7 @@ vk::DeviceMemory EngineDevice::allocateMemory(const EngineContext& instance,
 	}
 }
 
-uint32_t EngineDevice::findMemoryType(const EngineContext& instance,
+uint32_t Device::findMemoryType(const EngineContext& instance,
 	uint32_t typeFilter, vk::MemoryPropertyFlags properties) const
 {
 	vk::PhysicalDeviceMemoryProperties memProperties;
@@ -177,7 +179,7 @@ uint32_t EngineDevice::findMemoryType(const EngineContext& instance,
 	throw std::runtime_error("failed to find suitable memory type!");
 }
 
-vk::Format EngineDevice::findSupportedFormat(const EngineContext& instance, 
+vk::Format Device::findSupportedFormat(const EngineContext& instance, 
 	const std::vector<vk::Format>& candidates,
 	vk::ImageTiling tiling, vk::FormatFeatureFlags features) const
 {
@@ -197,7 +199,7 @@ vk::Format EngineDevice::findSupportedFormat(const EngineContext& instance,
 }
 
 
-//void EngineDevice::createLogicalDevice(const DeviceRequirements& requirements) {
+//void Device::createLogicalDevice(const DeviceRequirements& requirements) {
 //
 //    // Get queue family indices
 //    std::set<uint32_t> uniqueQueueFamilies = {
@@ -249,7 +251,7 @@ vk::Format EngineDevice::findSupportedFormat(const EngineContext& instance,
 //
 //}
 //
-//void EngineDevice::selectPhysicalDevice(const EngineContext& instance,
+//void Device::selectPhysicalDevice(const EngineContext& instance,
 //	const Window& window)
 //{
 //	vk::PhysicalDevice device = nullptr;

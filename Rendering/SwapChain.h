@@ -1,5 +1,5 @@
 #pragma once
-#include "EngineDevice.h"
+#include "Device.h"
 #include "SwapChainFormat.h"
 #include "RenderPass.h"
 #include "Semaphore.h"
@@ -19,14 +19,15 @@ private:
     Memory m_depthImageMemory;
     bool m_depthImageInitialized = false;
 
-    uint32_t m_imageCount; 
+    uint32_t m_imageCount;
 
     bool m_initialized = false;
 public:
     SwapChain() : m_swapChain(nullptr), m_activeSwapChainFormat(), m_imageCount(0), m_initialized(false) {};
 
-    SwapChain(const EngineContext& instance, const EngineDevice& device, const Window& window,
-        const RenderPass& renderPass, const SwapChainFormat& format);
+    SwapChain(const EngineContext& instance, const Device& device, const Window& window,
+        const RenderPass& renderPass, const SwapChainFormat& format, 
+        uint32_t presentQueueIndex, uint32_t workerQueueIndex);
 
     SwapChain(SwapChain&& other) noexcept {
         m_swapChain = std::exchange(other.m_swapChain, nullptr);
@@ -72,15 +73,15 @@ public:
 
     ~SwapChain() { assert(!m_initialized && "SwapChain was not destroyed!"); };
 
-    void init(const EngineContext& instance, const EngineDevice& device, const Window& window,
-        const RenderPass& renderPass, const SwapChainFormat& format);
+    void init(const EngineContext& instance, const Device& device, const Window& window,
+        const RenderPass& renderPass, const SwapChainFormat& format, uint32_t presentQueueIndex, uint32_t workerQueueIndex);
 
-    void initDepthImage(const EngineContext& instance, const EngineDevice& device);
+    void initDepthImage(const EngineContext& instance, const Device& device);
 
-    void recreate(const EngineContext& instance, const EngineDevice& device, const Window& window,
-        const RenderPass& renderPass, const SwapChainFormat& format);
+    void recreate(const EngineContext& instance, const Device& device, const Window& window,
+        const RenderPass& renderPass, const SwapChainFormat& format, uint32_t presentQueueIndex, uint32_t workerQueueIndex);
      
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 
@@ -113,22 +114,23 @@ public:
     };
 
     static vk::SwapchainKHR createSwapChain(const EngineContext& instance,
-        const EngineDevice& device, const Window& window,
-        const SwapChainFormat& activeSwapChainFormat, uint32_t imageCount);
+        const Device& device, const SwapChainSupportDetails& swapChainSupportDetails,
+        const Window& window, const SwapChainFormat& activeSwapChainFormat, uint32_t imageCount,
+        uint32_t presentQueueIndex, uint32_t workerQueueIndex);
 
     static std::vector<vk::Image> getSwapChainImages(const EngineContext& instance,
-        const EngineDevice& device, const vk::SwapchainKHR& swapChain, uint32_t& imageCount);
+        const Device& device, const vk::SwapchainKHR& swapChain, uint32_t& imageCount);
 
     static std::vector<vk::ImageView> createImageViews(const EngineContext& instance,
-        const EngineDevice& device, const SwapChainFormat& activeSwapChainFormat,
+        const Device& device, const SwapChainFormat& activeSwapChainFormat,
         const std::vector<vk::Image>& swapChainImages);
 
     static std::vector<vk::Framebuffer> createFrameBuffers(const EngineContext& instance,
-        const EngineDevice& device, const RenderPass& renderPass,
+        const Device& device, const RenderPass& renderPass,
         const std::vector<vk::ImageView>& imageViews, const SwapChainFormat& format);
 
     static std::vector<vk::Framebuffer> createFrameBuffers(const EngineContext& instance,
-        const EngineDevice& device, const RenderPass& renderPass,
+        const Device& device, const RenderPass& renderPass,
         const std::vector<vk::ImageView>& imageViews, vk::ImageView depthImageView, 
         const SwapChainFormat& format);
 
@@ -136,7 +138,7 @@ public:
 
     const std::vector<vk::Framebuffer>& getFrameBuffers() const { return m_swapChainFrameBuffers; };
 
-    bool acquireNextImage(const EngineContext& instance, const EngineDevice& device, 
+    bool acquireNextImage(const EngineContext& instance, const Device& device, 
     const Semaphore& semaphore, uint32_t& imageIndex) const {
         vk::Result result = device.getDevice().acquireNextImageKHR(
             m_swapChain, UINT64_MAX, semaphore.getSemaphore(), nullptr, &imageIndex);

@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "SwapChainFormat.h"
 
 class RenderPass
@@ -14,7 +14,7 @@ public:
 
     RenderPass() : m_renderPass(nullptr) {};
 
-    RenderPass(const EngineContext& instance, const EngineDevice& device, const SwapChainFormat& format);
+    RenderPass(const EngineContext& instance, const Device& device, const SwapChainFormat& format);
 
     RenderPass(RenderPass&& other) noexcept {
         m_renderPass = std::exchange(other.m_renderPass, nullptr);
@@ -40,7 +40,7 @@ public:
 
     ~RenderPass() { assert(!m_initialized && "RenderPass was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 

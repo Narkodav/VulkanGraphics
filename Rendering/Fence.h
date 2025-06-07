@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 
 class Fence
 {
@@ -12,7 +12,7 @@ private:
 public:
 
     Fence() {};
-    Fence(const EngineContext& instance, const EngineDevice& device, bool createSignaled = false);
+    Fence(const EngineContext& instance, const Device& device, bool createSignaled = false);
 
     Fence(Fence&& other) noexcept {
 
@@ -40,7 +40,7 @@ public:
 
     ~Fence() { assert(!m_initialized && "Fence was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 
@@ -53,8 +53,8 @@ public:
 
     bool isInitialized() const { return m_initialized; };
 
-    void wait(const EngineContext& instance, const EngineDevice& device);
-    void reset(const EngineContext& instance, const EngineDevice& device);
+    void wait(const EngineContext& instance, const Device& device);
+    void reset(const EngineContext& instance, const Device& device);
 
     vk::Fence getFence() const { return m_fence; };
 

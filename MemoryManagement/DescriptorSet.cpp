@@ -7,7 +7,7 @@ DescriptorSet::DescriptorSet(vk::DescriptorSet set, vk::DescriptorSetLayoutCreat
         m_layout[layout.pBindings[i].binding] = layout.pBindings[i];
 };
 
-void DescriptorSet::write(const EngineContext& instance, const EngineDevice& device,
+void DescriptorSet::write(const EngineContext& instance, const Device& device,
     const Buffer& buffer, uint32_t binding,
     size_t offset, size_t range)
 {
@@ -36,7 +36,7 @@ void DescriptorSet::write(const EngineContext& instance, const EngineDevice& dev
     device.getDevice().updateDescriptorSets(1, &descriptorWrite, 0, nullptr, instance.getDispatchLoader());
 }
 
-void DescriptorSet::write(const EngineContext& instance, const EngineDevice& device,
+void DescriptorSet::write(const EngineContext& instance, const Device& device,
     const Image& image, const Sampler& sampler, uint32_t binding)
 {
     vk::DescriptorImageInfo imageInfo{};

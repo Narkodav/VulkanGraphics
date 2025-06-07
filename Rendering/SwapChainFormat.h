@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "PlatformManagement/Window.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "EngineContext.h"
 
 class SwapChainFormat
@@ -25,7 +25,7 @@ public:
 
     SwapChainFormat(
         const EngineContext& instance,
-        const EngineDevice& device,
+        const Device& device,
         vk::SurfaceFormatKHR format = {},
         vk::PresentModeKHR mode = vk::PresentModeKHR::eImmediate,
         vk::Extent2D extent = { 0, 0 }
@@ -52,30 +52,22 @@ public:
     vk::Extent2D getSwapChainExtent() const { return m_swapChainExtent; };
     vk::Format getDepthFormat() const { return m_depthFormat; };
 
-    static vk::SurfaceFormatKHR chooseSurfaceFormat(const EngineDevice& device);
-    static vk::PresentModeKHR choosePresentMode(const EngineDevice& device);
-    static vk::Extent2D chooseExtent(const EngineDevice& device, const Window& window);
-
-    static SwapChainFormat create(
-        const EngineDevice& device,
-        const Window& window
-    ) {
-        return SwapChainFormat(
-            chooseSurfaceFormat(device),
-            choosePresentMode(device),
-            chooseExtent(device, window)
-        );
-    };
+    static vk::SurfaceFormatKHR chooseSurfaceFormat(const SwapChainSupportDetails& supportDetails);
+    static vk::PresentModeKHR choosePresentMode(const SwapChainSupportDetails& supportDetails);
+    static vk::Extent2D chooseExtent(const SwapChainSupportDetails& supportDetails, const Window& window);
 
     static SwapChainFormat create(
         const EngineContext& instance,
-        const EngineDevice& device,
+        const Device& device,
         const Window& window
     ) {
+        SwapChainSupportDetails supports = device.getPhysicalDevice()
+            .getSwapChainSupportDetails(instance, window);
+
         return SwapChainFormat(instance, device,
-            chooseSurfaceFormat(device),
-            choosePresentMode(device),
-            chooseExtent(device, window)
+            chooseSurfaceFormat(supports),
+            choosePresentMode(supports),
+            chooseExtent(supports, window)
         );
     };
 

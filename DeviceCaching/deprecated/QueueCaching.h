@@ -9,19 +9,7 @@
 
 #include "Window.h"
 
-enum class QueuePropertyType : size_t {
-    PRESENT_SUPPORT,                            // expects std::any containing VkBool32/bool true if needed false if unneeded
-    GRAPHICS_SUPPORT,                           // expects std::any containing VkBool32/bool true if needed false if unneeded
-    COMPUTE_SUPPORT,                            // expects std::any containing VkBool32/bool true if needed false if unneeded
-    TRANSFER_SUPPORT,                           // expects std::any containing VkBool32/bool true if needed false if unneeded
-    SPARSE_BINDING_SUPPORT,                     // expects std::any containing VkBool32/bool true if needed false if unneeded
-    PROTECTED_SUPPORT,                          // expects std::any containing VkBool32/bool true if needed false if unneeded
-    QUEUE_COUNT,                                // expects std::any containing uint32_t (min amount of queues)
-    TIMESTAMP_VALID_BITS,                       // expects std::any containing uint32_t
-    MIN_IMAGE_TRANSFER_GRANULARITY,             // expects std::any containing std::array<uint32_t, 3>
 
-    PROPERTIES_NUM
-};
 
 class QueueCaching
 {

@@ -5,33 +5,7 @@
 #include <map>
 #include <string>
 
-enum class FeatureType : size_t {
-    GEOMETRY_SHADER = 0,                        //geometry shader
-    TESSELLATION_SHADER,                        //tessellation shader
 
-    SAMPLER_ANISOTROPY,                         //sample anisatropy
-    FILL_MODE_NON_SOLID,
-    TEXTURE_COMPRESSION_BC,
-    TEXTURE_COMPRESSION_ETC2,
-
-    SHADER_INT64,
-    SHADER_FLOAT64,
-    SHADER_INT16,
-
-    MULTI_DRAW_INDIRECT,
-    WIDE_LINES,
-    LARGE_POINTS,
-    MULTI_VIEWPORT,
-
-    DEPTH_CLAMP,
-    DEPTH_BIAS_CLAMP,
-    DUAL_SRC_BLEND,
-
-    VERTEX_PIPELINE_STORES_AND_ATOMICS,
-    FRAGMENT_STORES_AND_ATOMICS,
-
-    FEATURES_NUM
-};
 
 class FeatureCaching
 {

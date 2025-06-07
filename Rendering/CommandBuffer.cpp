@@ -263,7 +263,7 @@ void CommandBuffer::reset(const EngineContext& instance)
 	}
 }
 
-//CommandBuffer allocateBuffer(const EngineContext& instance, const EngineDevice& device,
+//CommandBuffer allocateBuffer(const EngineContext& instance, const Device& device,
 //	vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) {
 //	vk::CommandBufferAllocateInfo allocInfo{};
 //	allocInfo.setCommandPool(m_pool)
@@ -287,7 +287,7 @@ void CommandBuffer::reset(const EngineContext& instance)
 //	return buffer;
 //}
 //
-//void freeBuffer(const EngineContext& instance, const EngineDevice& device, CommandBuffer& buffer) {
+//void freeBuffer(const EngineContext& instance, const Device& device, CommandBuffer& buffer) {
 //
 //	if (buffer.m_pool != this || buffer.m_pool == nullptr)
 //		throw std::runtime_error("Buffer is deallocated or doesn't belong to this pool");

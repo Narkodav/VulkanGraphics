@@ -1,6 +1,6 @@
 #include "Fence.h"
 
-Fence::Fence(const EngineContext& instance, const EngineDevice& device, bool createSignaled/* = false*/)
+Fence::Fence(const EngineContext& instance, const Device& device, bool createSignaled/* = false*/)
 {
 	vk::FenceCreateInfo fenceInfo{};
 	fenceInfo.sType = vk::StructureType::eFenceCreateInfo;
@@ -20,14 +20,14 @@ Fence::Fence(const EngineContext& instance, const EngineDevice& device, bool cre
 	m_initialized = true;
 }
 
-void Fence::wait(const EngineContext& instance, const EngineDevice& device)
+void Fence::wait(const EngineContext& instance, const Device& device)
 {
 	vk::Result result = device.getDevice().waitForFences(m_fence, VK_TRUE, UINT64_MAX, instance.getDispatchLoader());
 	if (result != vk::Result::eSuccess)
 		throw std::runtime_error("Error waiting for a fence");
 }
 
-void Fence::reset(const EngineContext& instance, const EngineDevice& device)
+void Fence::reset(const EngineContext& instance, const Device& device)
 {
 	device.getDevice().resetFences(m_fence, instance.getDispatchLoader());
 }

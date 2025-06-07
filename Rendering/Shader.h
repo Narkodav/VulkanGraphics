@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 
 class Shader
 {
@@ -23,7 +23,7 @@ private:
 	bool m_initialized = false;
 public:
     Shader() {};
-	Shader(const EngineContext& instance, const EngineDevice& device,
+	Shader(const EngineContext& instance, const Device& device,
         const std::string& shaderPath);
 
     Shader(Shader&& other) noexcept {
@@ -54,7 +54,7 @@ public:
 
     ~Shader() { assert(!m_initialized && "Shader was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 
@@ -67,7 +67,7 @@ public:
 
 	static std::vector<char> readFile(const std::string& filename);
 	static vk::ShaderModule createShaderModule(const EngineContext& instance,
-		const EngineDevice& device, const std::vector<char>& code);
+		const Device& device, const std::vector<char>& code);
 
     const vk::ShaderModule& getModule() const { return m_shaderModule; };
     const Type& getType() const { return m_type; };

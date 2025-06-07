@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 
 class Sampler
 {
@@ -32,7 +32,7 @@ public:
         operator vk::SamplerCreateInfo() const { return m_samplerInfo; };
 
         Descriptor() {};
-        Descriptor(const EngineContext& instance, const EngineDevice& device,
+        Descriptor(const EngineContext& instance, const Device& device,
             Filter magFilter = Filter::LINEAR, Filter minFilter = Filter::LINEAR,
             AddressMode modeU = AddressMode::REPEAT,
             AddressMode modeV = AddressMode::REPEAT,
@@ -49,7 +49,7 @@ public:
             m_samplerInfo.maxAnisotropy = 1.0f;
 
             vk::PhysicalDeviceProperties properties{};
-            properties = device.getPhysicalDevice().getProperties(instance.getDispatchLoader());
+            properties = device.getPhysicalDevice().getHandle().getProperties(instance.getDispatchLoader());
             m_samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
 
             m_samplerInfo.borderColor = vk::BorderColor::eIntOpaqueBlack;
@@ -82,7 +82,7 @@ private:
 public:
 
     Sampler() {};
-    Sampler(const EngineContext& instance, const EngineDevice& device, const Descriptor& descriptor);
+    Sampler(const EngineContext& instance, const Device& device, const Descriptor& descriptor);
 
     Sampler(Sampler&& other) noexcept {
 
@@ -110,7 +110,7 @@ public:
 
     ~Sampler() { assert(!m_initialized && "Sampler was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 

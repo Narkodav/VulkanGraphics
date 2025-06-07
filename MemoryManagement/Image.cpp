@@ -1,11 +1,11 @@
 #include "Image.h"
 
-Image::Image(const EngineContext& instance, const EngineDevice& device, const std::string& filepath)
+Image::Image(const EngineContext& instance, const Device& device, const std::string& filepath)
 {
     load(instance, device, filepath);
 }
 
-void Image::load(const EngineContext& instance, const EngineDevice& device, const std::string& filepath)
+void Image::load(const EngineContext& instance, const Device& device, const std::string& filepath)
 {
     int texWidth, texHeight, texChannels;
     m_pixels = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -48,7 +48,7 @@ void Image::load(const EngineContext& instance, const EngineDevice& device, cons
     m_initialized = true;
 }
 
-void Image::createView(const EngineContext& instance, const EngineDevice& device)
+void Image::createView(const EngineContext& instance, const Device& device)
 {
     vk::ImageViewCreateInfo createInfo{};
     createInfo.sType = vk::StructureType::eImageViewCreateInfo;
@@ -76,7 +76,7 @@ void Image::createView(const EngineContext& instance, const EngineDevice& device
     }
 }
 
-//void Image::transfer(const EngineContext& instance, const EngineDevice& device,
+//void Image::transfer(const EngineContext& instance, const Device& device,
 //    MappedMemory& memory, size_t offset = 0)
 //{
 //    assert(offset % memory.getAlignment() == 0 && "offset must be aligned");    

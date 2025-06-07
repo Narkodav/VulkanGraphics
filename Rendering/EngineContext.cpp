@@ -65,7 +65,7 @@ std::vector<const char*> EngineContext::getRequiredExtensions()
         buffer = glfwGetRequiredInstanceExtensions(&RequiredExtensionCount);
         RequiredExtensions.assign(buffer, buffer + RequiredExtensionCount);
 #ifdef _DEBUG
-        RequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        RequiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);    
 #endif
         return RequiredExtensions;
     }
@@ -207,13 +207,14 @@ vk::DebugUtilsMessengerCreateInfoEXT EngineContext::getDebugCreateInfo(
 {
     vk::DebugUtilsMessengerCreateInfoEXT createInfo{};
     createInfo.messageSeverity = vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+        vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
         vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
         vk::DebugUtilsMessageSeverityFlagBitsEXT::eError;
 
     createInfo.messageType = vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
         vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
         vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance;
-
+    
     createInfo.pfnUserCallback = callback;
     createInfo.pUserData = pUserData; // Optional
     return createInfo;
@@ -230,7 +231,11 @@ vk::DebugUtilsMessengerEXT EngineContext::getDebugMessenger(
 };
 
 EngineContext::EngineContext(const std::string& engineName, const std::string& appName,
-    Version engineVersion, Version appVersion)
+    Version engineVersion, Version appVersion,
+    DebugMessageSeverity::Flags debugMessageSeveritySettings /*= DebugMessageSeverity::Bits::ALL*/)
+#ifdef _DEBUG
+    : m_debugMessageSeveritySettings(debugMessageSeveritySettings)
+#endif
 {
     PlatformContext::instance();
     activeEngines.insert(engineName);
@@ -250,11 +255,11 @@ EngineContext::EngineContext(const std::string& engineName, const std::string& a
     m_debugMessenger = getDebugMessenger(m_dispatchLoader,
         m_instance, debugCreateInfo);
 #else
+    (void)debugMessageSeveritySettings;
     m_instance = getInstance(engineName, appName,
         engineVersion, appVersion);
     m_dispatchLoader = getDispatchLoader(m_instance);
 #endif
-    std::cout << this << std::endl;
     m_initialized = true;
 }
 
@@ -277,6 +282,15 @@ void EngineContext::destroy()
     m_initialized = false;
 }
 
+void EngineContext::setDebugSeverityThreshold(DebugMessageSeverity::Flags severitySettings)
+{
+#ifdef _DEBUG
+    m_debugMessageSeveritySettings = severitySettings;
+#else
+    (void)severitySettings;
+#endif
+}
+
 VKAPI_ATTR vk::Bool32 VKAPI_CALL EngineContext::static_debugCallback(
     vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     vk::DebugUtilsMessageTypeFlagsEXT messageType,
@@ -293,8 +307,12 @@ VKAPI_ATTR vk::Bool32 VKAPI_CALL EngineContext::debugCallback(
     const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData)
 {
-    std::cerr << "Engine [" << m_engineName << "], Application [" << m_appName << "], Validation layer: "
-        << pCallbackData->pMessage << std::endl;
+#ifdef _DEBUG
+    if ((static_cast<uint32_t>(m_debugMessageSeveritySettings) &
+        static_cast<uint32_t>(messageSeverity)) == 0)
+        return VK_FALSE;
+#endif
+    std::cerr << "Engine [" << m_engineName << "], Application [" << m_appName << "] ";
     switch (messageSeverity) {
     case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
         // Diagnostic messages

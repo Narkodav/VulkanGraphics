@@ -1,14 +1,11 @@
 #include "Queue.h"
 
-Queue::Queue(const EngineContext& instance, 
-	const EngineDevice& device, QueueSpecialisation specialisation)
+Queue::Queue(const EngineContext& instance, const Device& device,
+    uint32_t familyIndex, uint32_t queueIndex)
 {
-    QueueCreateData data = device.getQueueData(specialisation);
-
-    m_queue = data.queue;
-    m_family = data.index;
-    m_specialisation = data.specialisation;
-
+    m_queue = device.getDevice().getQueue(familyIndex, queueIndex);
+    m_family = familyIndex;
+    m_index = queueIndex;
     m_initialized = true;
 }
 

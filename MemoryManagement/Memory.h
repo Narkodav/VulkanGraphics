@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Rendering/Flags.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 #include "Rendering/EngineContext.h"
 #include "Buffer.h"
 #include "Image.h"
@@ -20,7 +20,7 @@ public:
 
     Memory() {};
 
-    Memory(const EngineContext& instance, const EngineDevice& device,
+    Memory(const EngineContext& instance, const Device& device,
         const vk::MemoryRequirements& memRequirements, MemoryProperty::Flags memoryProperties,
         size_t capacity);
 
@@ -55,7 +55,7 @@ public:
 
     ~Memory() { assert(!m_initialized && "Memory was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 
@@ -66,8 +66,8 @@ public:
         m_initialized = false;
     }
 
-    bool bindBuffer(const EngineContext& instance, const EngineDevice& device, const Buffer& buffer, size_t offset = 0);
-    bool bindImage(const EngineContext& instance, const EngineDevice& device, const Image& image, size_t offset = 0);
+    bool bindBuffer(const EngineContext& instance, const Device& device, const Buffer& buffer, size_t offset = 0);
+    bool bindImage(const EngineContext& instance, const Device& device, const Image& image, size_t offset = 0);
     vk::DeviceMemory getMemory() { return m_memory; };
 };
 

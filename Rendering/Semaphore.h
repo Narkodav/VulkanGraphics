@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 
 class Semaphore
 {
@@ -12,7 +12,7 @@ private:
 public:
 	
     Semaphore() {};
-    Semaphore(const EngineContext& instance, const EngineDevice& device);
+    Semaphore(const EngineContext& instance, const Device& device);
 
     Semaphore(Semaphore&& other) noexcept {
 
@@ -40,7 +40,7 @@ public:
 
     ~Semaphore() { assert(!m_initialized && "Semaphore was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 

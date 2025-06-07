@@ -55,15 +55,14 @@ private:
 	bool m_scrolled = false;
 	bool m_buttonStateChanged = false;
 
-	Mouse* self = this;
 public:
 	Mouse() = default;
 
 	Mouse(const Mouse&) = delete;
 	Mouse& operator=(const Mouse&) = delete;
 
-	Mouse(Mouse&&) noexcept = delete;
-	Mouse& operator=(Mouse&&) noexcept = delete;
+	Mouse(Mouse&&) noexcept = default;
+	Mouse& operator=(Mouse&&) noexcept = default;
 
 	Mouse(Window& window)
 	{

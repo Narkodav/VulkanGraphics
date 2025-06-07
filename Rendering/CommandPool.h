@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "PlatformManagement/Window.h"
 #include "CommandBuffer.h"
 
@@ -18,7 +18,7 @@ private:
 public:
     CommandPool() : m_pool(nullptr), m_initialized(false) {};
 
-    CommandPool(const EngineContext& instance, const EngineDevice& device, uint32_t queueFamilyIndex);
+    CommandPool(const EngineContext& instance, const Device& device, uint32_t queueFamilyIndex);
 
     CommandPool(CommandPool&& other) noexcept {
         m_pool = std::exchange(other.m_pool, nullptr);
@@ -49,7 +49,7 @@ public:
         assert(m_allocatedBuffers.size() == 0 && "CommandPool has allocated buffers!");
     };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
         assert(m_allocatedBuffers.size() == 0 && "CommandPool has allocated buffers!");
@@ -61,7 +61,7 @@ public:
         m_initialized = false;
     };
 
-    CommandBufferHandle allocateBuffer(const EngineContext& instance, const EngineDevice& device,
+    CommandBufferHandle allocateBuffer(const EngineContext& instance, const Device& device,
         vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary) {
         vk::CommandBufferAllocateInfo allocInfo{};
         allocInfo.setCommandPool(m_pool)
@@ -79,7 +79,7 @@ public:
         return handle;
     }
 
-    void freeBuffer(const EngineContext& instance, const EngineDevice& device, CommandBufferHandle& buffer) {
+    void freeBuffer(const EngineContext& instance, const Device& device, CommandBufferHandle& buffer) {
  
         if (m_allocatedBuffers.find(buffer) == m_allocatedBuffers.end())
             throw std::runtime_error("Buffer is deallocated or doesn't belong to this pool");
@@ -91,7 +91,7 @@ public:
     }
 
     // Reset the entire pool (faster than freeing individual buffers)
-    void reset(const EngineContext& instance, const EngineDevice& device) {
+    void reset(const EngineContext& instance, const Device& device) {
         device.getDevice().resetCommandPool(m_pool, vk::CommandPoolResetFlags(), instance.getDispatchLoader());
 
         for(auto& buffer : m_allocatedBuffers)
@@ -103,7 +103,7 @@ public:
         m_allocatedBuffers.clear();
     }
 
-    void makeOneTimeSubmit(const EngineContext& instance, const EngineDevice& device,
+    void makeOneTimeSubmit(const EngineContext& instance, const Device& device,
         const Queue& queue, std::function<void(const CommandBufferHandle&)>&& func);
 
     const vk::CommandPool& getPool() const { return m_pool; };

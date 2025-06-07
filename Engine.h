@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "ResourceManager.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 #include "Rendering/SwapChain.h"
 #include "Rendering/RenderRegion.h"
 #include "Rendering/RenderPass.h"
@@ -49,7 +49,8 @@ private:
 	ResourceManager m_resourceManager;
 
 	EngineContext m_engineContext;
-	EngineDevice m_device;
+	PhysicalDeviceCache m_deviceCache;
+	Device m_device;
 	Window m_window;
 	RenderRegion m_canvas;
 	SwapChainFormat m_format;

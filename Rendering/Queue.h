@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "SwapChainFormat.h"
 #include "Semaphore.h"
 #include "Fence.h"
@@ -13,19 +13,23 @@ class Queue
 private:
     vk::Queue m_queue = nullptr;
     uint32_t m_family = 0;
-    QueueSpecialisation m_specialisation = QueueSpecialisation::NUM;
+    uint32_t m_index = 0;
 
     bool m_initialized = false;
 public:
 
     Queue() {};
-    Queue(const EngineContext& instance, const EngineDevice& device, QueueSpecialisation specialisation);
+    Queue(const EngineContext& instance, const Device& device,
+        uint32_t familyIndex, uint32_t queueIndex);
 
-    Queue(Queue&& other) noexcept = default;
-    Queue& operator=(Queue&& other) noexcept = default;
+    Queue(Queue&&) noexcept = default;
+    Queue& operator=(Queue&&) noexcept = default;
 
     Queue(const Queue&) noexcept = default;
     Queue& operator=(const Queue&) noexcept = default;
+
+    uint32_t getFamily() const { return m_family; }
+    uint32_t getIndex() const { return m_index; }
 
     const vk::Queue& getQueue() const { return m_queue; };
 

@@ -1,7 +1,7 @@
 #include "Queue.h"
 #include "CommandPool.h"
 
-CommandPool::CommandPool(const EngineContext& instance, const EngineDevice& device, uint32_t queueFamilyIndex)
+CommandPool::CommandPool(const EngineContext& instance, const Device& device, uint32_t queueFamilyIndex)
 {
 	vk::CommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = vk::StructureType::eCommandPoolCreateInfo;
@@ -21,7 +21,7 @@ CommandPool::CommandPool(const EngineContext& instance, const EngineDevice& devi
     m_initialized = true;
 }
 
-void CommandPool::makeOneTimeSubmit(const EngineContext& instance, const EngineDevice& device,
+void CommandPool::makeOneTimeSubmit(const EngineContext& instance, const Device& device,
     const Queue& queue, std::function<void(const CommandBufferHandle&)>&& func)
 {
     auto temporary = this->allocateBuffer(instance, device);

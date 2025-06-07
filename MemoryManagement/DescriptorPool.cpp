@@ -1,6 +1,6 @@
 #include "DescriptorPool.h"
 
-DescriptorPool::DescriptorPool(const EngineContext& instance, const EngineDevice& device,
+DescriptorPool::DescriptorPool(const EngineContext& instance, const Device& device,
     const std::vector<Size>& sizes, size_t maxSets)
 {
     for (const auto& size : sizes)

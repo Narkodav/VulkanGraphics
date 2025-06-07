@@ -7,49 +7,7 @@
 #include <map>
 #include <string>
 
-enum class PropertyType : size_t {
-    // Core Limits
-    MAX_IMAGE_DIMENSION_2D,                     // expects std::any containing uint32_t
-    MAX_IMAGE_DIMENSION_3D,                     // expects std::any containing uint32_t
-    MAX_IMAGE_DIMENSION_CUBE,                   // expects std::any containing uint32_t
-    MAX_IMAGE_ARRAY_LAYERS,                     // expects std::any containing uint32_t
 
-    // Descriptor Limits
-    MAX_BOUND_DESCRIPTOR_SETS,                  // expects std::any containing uint32_t
-    MAX_PER_STAGE_DESCRIPTOR_SAMPLERS,          // expects std::any containing uint32_t
-    MAX_PER_STAGE_DESCRIPTOR_UNIFORM_BUFFERS,   // expects std::any containing uint32_t
-    MAX_PER_STAGE_DESCRIPTOR_STORAGE_BUFFERS,   // expects std::any containing uint32_t
-
-    // Buffer Limits
-    MAX_STORAGE_BUFFER_RANGE,                   // expects std::any containing uint64_t (VkDeviceSize)
-    MAX_UNIFORM_BUFFER_RANGE,                   // expects std::any containing uint64_t (VkDeviceSize)
-    MIN_UNIFORM_BUFFER_OFFSET_ALIGNMENT,        // expects std::any containing uint64_t (VkDeviceSize)
-    MIN_STORAGE_BUFFER_OFFSET_ALIGNMENT,        // expects std::any containing uint64_t (VkDeviceSize)
-
-    // Viewport/Scissor
-    MAX_VIEWPORT_DIMENSIONS,                    // expects std::any containing std::array<uint32_t, 2>
-    MAX_VIEWPORTS,                              // expects std::any containing uint32_t
-    VIEWPORT_BOUNDS_RANGE,                      // expects std::any containing std::array<float, 2>
-    VIEWPORT_SUB_PIXEL_BITS,                    // expects std::any containing uint32_t
-
-    // Sample Limits
-    MAX_FRAMEBUFFER_LAYERS,                     // expects std::any containing uint32_t
-    MAX_SAMPLE_MASK_WORDS,                      // expects std::any containing uint32_t
-    MAX_COLOR_ATTACHMENTS,                      // expects std::any containing uint32_t
-
-    // Memory Limits
-    MAX_MEMORY_ALLOCATION_COUNT,                // expects std::any containing uint32_t
-    MAX_SAMPLER_ALLOCATION_COUNT,               // expects std::any containing uint32_t
-    BUFFER_IMAGE_GRANULARITY,                   // expects std::any containing uint64_t (VkDeviceSize)
-    SPARSE_ADDRESS_SPACE_SIZE,                  // expects std::any containing uint64_t (VkDeviceSize)
-
-    // Quality Settings
-    MAX_SAMPLER_ANISOTROPY,                     // expects std::any containing float
-    MAX_SAMPLER_LOD_BIAS,                       // expects std::any containing float
-    TIMESTAMP_PERIOD,                           // expects std::any containing float
-
-    PROPERTIES_NUM,
-};
 
 class PropertyCaching
 {

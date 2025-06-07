@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "PlatformManagement/Window.h"
 #include "EngineContext.h"
+#include "DeviceCaching/PhysicalDeviceCache.h"
 
 enum class QueueSpecialisation
 {
@@ -81,7 +82,7 @@ struct SwapChainSupportDetails {
 };
 
 //chooses a device with rendering and present support, will implement custom requirements later
-class EngineDevice
+class Device
 {
 public:
     static inline const std::vector<const char*> requiredExtensions = {
@@ -99,15 +100,15 @@ private:
 
 public:
 
-    EngineDevice() : m_physicalDevice(nullptr), m_device(nullptr) {};
+    Device() : m_physicalDevice(nullptr), m_device(nullptr) {};
 
-    EngineDevice(const EngineContext& instance, const Window& window) {
+    Device(const EngineContext& instance, const Window& window) {
         selectPhysicalDevice(instance, window);
         createLogicalDevice(instance, window);
         m_initialized = true;
     };
 
-    EngineDevice(EngineDevice&& other) noexcept {
+    Device(Device&& other) noexcept {
         
         m_basicIndices              = std::exchange(other.m_basicIndices, {});
         m_physicalDevice            = std::exchange(other.m_physicalDevice, nullptr);
@@ -119,12 +120,12 @@ public:
     };
 
     //moving to an initialized device is undefined behavior, destroy before moving
-    EngineDevice& operator=(EngineDevice&& other) noexcept
+    Device& operator=(Device&& other) noexcept
     {
         if (this == &other)
             return *this;
 
-        assert(!m_initialized && "EngineDevice::operator=() - EngineDevice already initialized");
+        assert(!m_initialized && "Device::operator=() - Device already initialized");
 
         m_basicIndices              = std::exchange(other.m_basicIndices, {});
         m_physicalDevice            = std::exchange(other.m_physicalDevice, nullptr);
@@ -136,10 +137,10 @@ public:
         return *this;
     };
 
-    EngineDevice(const EngineDevice& other) noexcept = delete;
-    EngineDevice& operator=(const EngineDevice& other) noexcept = delete;
+    Device(const Device& other) noexcept = delete;
+    Device& operator=(const Device& other) noexcept = delete;
 
-    ~EngineDevice() { assert(!m_initialized && "EngineDevice was not destroyed!"); };
+    ~Device() { assert(!m_initialized && "Device was not destroyed!"); };
 
     void destroy(const vk::detail::DispatchLoaderDynamic& dispatcher) {
         if (!m_initialized)

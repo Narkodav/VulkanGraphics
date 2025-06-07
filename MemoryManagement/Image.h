@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Rendering/EngineContext.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 
 class CommandBuffer;
 
@@ -28,7 +28,7 @@ private:
 public:
     Image() : m_initialized(false) {};
 
-    Image(const EngineContext& instance, const EngineDevice& device, const std::string& filepath);
+    Image(const EngineContext& instance, const Device& device, const std::string& filepath);
 
     Image(Image&& other) noexcept {
         m_width = std::exchange(other.m_width, 0);
@@ -70,8 +70,8 @@ public:
 
     ~Image() { assert(!m_initialized && "Image::~Image() - Image was not destroyed!"); };
 
-    void load(const EngineContext& instance, const EngineDevice& device, const std::string& filepath);
-    void createView(const EngineContext& instance, const EngineDevice& device);
+    void load(const EngineContext& instance, const Device& device, const std::string& filepath);
+    void createView(const EngineContext& instance, const Device& device);
 
     std::span<uint8_t> getPixelData() const { return  std::span<uint8_t>(m_pixels, m_capacity); };
     vk::Image getImage() const { return m_image; };
@@ -79,7 +79,7 @@ public:
     size_t getWidth() const { return m_width; };
     size_t getHeight() const { return m_height; };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 

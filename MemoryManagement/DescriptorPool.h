@@ -2,7 +2,7 @@
 #pragma once
 #include "Common.h"
 #include "Rendering/EngineContext.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 #include "PlatformManagement/Window.h"
 #include "DescriptorSet.h"
 #include "Rendering/GraphicsPipeline.h"
@@ -37,7 +37,7 @@ private:
 public:
     DescriptorPool() : m_pool(nullptr), m_initialized(false) {};
 
-    DescriptorPool(const EngineContext& instance, const EngineDevice& device,
+    DescriptorPool(const EngineContext& instance, const Device& device,
         const std::vector<Size>& sizes, size_t maxSets);
 
     DescriptorPool(DescriptorPool&& other) noexcept {
@@ -67,7 +67,7 @@ public:
         //assert(m_allocatedBuffers.size() == 0 && "DescriptorPool has allocated buffers!");
     };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
         //assert(m_allocatedBuffers.size() == 0 && "DescriptorPool has allocated buffers!");
@@ -86,7 +86,7 @@ public:
     };
 
     std::vector<DescriptorSetHandle> allocateSets(
-        const EngineContext& instance, const EngineDevice& device,
+        const EngineContext& instance, const Device& device,
         const GraphicsPipeline& pipeline, size_t setAmount) {
 
         std::vector<vk::DescriptorSetLayout> layouts(setAmount, pipeline.getDescriptorSetLayout());
@@ -109,7 +109,7 @@ public:
         return setsWrapped;
     }
 
-    //void freeBuffer(const EngineContext& instance, const EngineDevice& device, CommandBufferHandle& buffer) {
+    //void freeBuffer(const EngineContext& instance, const Device& device, CommandBufferHandle& buffer) {
 
     //    if (m_allocatedBuffers.find(buffer) == m_allocatedBuffers.end())
     //        throw std::runtime_error("Buffer is deallocated or doesn't belong to this pool");
@@ -121,7 +121,7 @@ public:
     //}
 
     //// Reset the entire pool (faster than freeing individual buffers)
-    //void reset(const EngineContext& instance, const EngineDevice& device) {
+    //void reset(const EngineContext& instance, const Device& device) {
     //    device.getDevice().resetCommandPool(m_pool, vk::CommandPoolResetFlags(), instance.getDispatchLoader());
 
     //    for (auto& buffer : m_allocatedBuffers)

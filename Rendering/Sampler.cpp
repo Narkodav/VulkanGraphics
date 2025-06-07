@@ -1,6 +1,6 @@
 #include "Sampler.h"
 
-Sampler::Sampler(const EngineContext& instance, const EngineDevice& device, const Descriptor& descriptor) :
+Sampler::Sampler(const EngineContext& instance, const Device& device, const Descriptor& descriptor) :
 	m_descriptor(descriptor)
 {
 	try {

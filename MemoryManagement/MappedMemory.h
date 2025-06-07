@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Rendering/Flags.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 #include "Rendering/EngineContext.h"
 #include "Buffer.h"
 #include "Image.h"
@@ -23,7 +23,7 @@ public:
     MappedMemory() {};
 
     // Automatically adds HOST_VISIBLE | HOST_COHERENT to `memoryProperties`.
-    MappedMemory(const EngineContext& instance, const EngineDevice& device,
+    MappedMemory(const EngineContext& instance, const Device& device,
         const vk::MemoryRequirements& memRequirements, MemoryProperty::Flags memoryProperties,
         size_t capacity);
 
@@ -60,7 +60,7 @@ public:
 
     ~MappedMemory() { assert(!m_initialized && "MappedMemory was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 
@@ -72,10 +72,10 @@ public:
         m_initialized = false;
     }
 
-    bool bindBuffer(const EngineContext& instance, const EngineDevice& device,
+    bool bindBuffer(const EngineContext& instance, const Device& device,
         const Buffer& buffer, size_t offset = 0);
 
-    bool bindImage(const EngineContext& instance, const EngineDevice& device,
+    bool bindImage(const EngineContext& instance, const Device& device,
         const Image& image, size_t offset = 0);
 
     // size in T objects, offset in bytes, size * sizeof(T) and offset must be multiples of alignment

@@ -1,6 +1,6 @@
 #include "Memory.h"
 
-Memory::Memory(const EngineContext& instance, const EngineDevice& device,
+Memory::Memory(const EngineContext& instance, const Device& device,
     const vk::MemoryRequirements& memRequirements, MemoryProperty::Flags memoryProperties,
     size_t capacity) :
     m_memoryProperties(memoryProperties)
@@ -12,7 +12,7 @@ Memory::Memory(const EngineContext& instance, const EngineDevice& device,
     m_initialized = true;
 }
 
-bool Memory::bindBuffer(const EngineContext& instance, const EngineDevice& device, const Buffer& buffer, size_t offset) {
+bool Memory::bindBuffer(const EngineContext& instance, const Device& device, const Buffer& buffer, size_t offset) {
     if (!m_initialized)
         return false;
 
@@ -23,7 +23,7 @@ bool Memory::bindBuffer(const EngineContext& instance, const EngineDevice& devic
     return true;
 }
 
-bool Memory::bindImage(const EngineContext& instance, const EngineDevice& device, const Image& image, size_t offset /*= 0*/)
+bool Memory::bindImage(const EngineContext& instance, const Device& device, const Image& image, size_t offset /*= 0*/)
 {
     if (!m_initialized)
         return false;

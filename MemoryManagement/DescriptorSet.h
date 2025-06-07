@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "Rendering/EngineContext.h"
-#include "Rendering/EngineDevice.h"
+#include "Rendering/Device.h"
 #include "PlatformManagement/Window.h"
 #include "Buffer.h"
 #include "Image.h"
@@ -52,11 +52,11 @@ public:
         //assert(m_allocatedBuffers.size() == 0 && "DescriptorPool has allocated buffers!");
     };
 
-    void write(const EngineContext& instance, const EngineDevice& device,
+    void write(const EngineContext& instance, const Device& device,
         const Buffer& buffer, uint32_t binding,
         size_t offset, size_t range);
 
-    void write(const EngineContext& instance, const EngineDevice& device,
+    void write(const EngineContext& instance, const Device& device,
         const Image& image, const Sampler& sampler, uint32_t binding);
 
     vk::DescriptorSet getSet() const { return m_set; };

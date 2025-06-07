@@ -1,7 +1,7 @@
 #include "Buffer.h"
 
 
-Buffer::Buffer(const EngineContext& instance, const EngineDevice& device,
+Buffer::Buffer(const EngineContext& instance, const Device& device,
 	size_t byteSize, BufferUsage::Flags usageFlags, bool allowConcurrentAccess /*= false*/) : m_capacity(byteSize)
 {
     m_descriptor = Descriptor(byteSize, usageFlags, allowConcurrentAccess);
@@ -20,7 +20,7 @@ Buffer::Buffer(const EngineContext& instance, const EngineDevice& device,
 	m_initialized = true;
 }
 
-Buffer::Buffer(const EngineContext& instance, const EngineDevice& device, Descriptor descriptor) :
+Buffer::Buffer(const EngineContext& instance, const Device& device, Descriptor descriptor) :
     m_descriptor(descriptor), m_capacity(m_descriptor.getBufferInfo().size)
 {
     try {
@@ -37,7 +37,7 @@ Buffer::Buffer(const EngineContext& instance, const EngineDevice& device, Descri
     m_initialized = true;
 }
 
-//void Buffer::allocateMemory(const EngineContext& instance, const EngineDevice& device,
+//void Buffer::allocateMemory(const EngineContext& instance, const Device& device,
 //    MemoryPropertyFlags memoryPropertyFlags)
 //{
 //    m_memory = device.allocateMemory(instance, m_buffer, memoryPropertyFlags);

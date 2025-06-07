@@ -145,3 +145,24 @@ template<>
 struct BitTraits<CommandBufferUsage::Bits> {
     using ParentType = CommandBufferUsage;
 };
+
+struct DebugMessageSeverity
+{
+    enum class Bits
+    {
+        NONE = 0,
+        VERBOSE = vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose,
+        INFO = vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo,
+        WARNING = vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
+        ERROR = vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
+        ALL = VERBOSE | INFO | WARNING | ERROR
+    };
+
+    using VulkanFlags = vk::DebugUtilsMessageSeverityFlagsEXT;
+    using Flags = Flags<DebugMessageSeverity>;
+};
+
+template<>
+struct BitTraits<DebugMessageSeverity::Bits> {
+    using ParentType = DebugMessageSeverity;
+};

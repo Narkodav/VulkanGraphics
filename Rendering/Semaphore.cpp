@@ -1,6 +1,6 @@
 #include "Semaphore.h"
 
-Semaphore::Semaphore(const EngineContext& instance, const EngineDevice& device)
+Semaphore::Semaphore(const EngineContext& instance, const Device& device)
 {
 	vk::SemaphoreCreateInfo semaphoreInfo{};
 	semaphoreInfo.sType = vk::StructureType::eSemaphoreCreateInfo;

@@ -2,7 +2,7 @@
 
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "RenderRegion.h"
 #include "SwapChain.h"
 #include "Shader.h"
@@ -111,7 +111,7 @@ public:
     GraphicsPipeline() {};
 
     template <VertexDefinition... VertexDefs, DescriptorDefinition... DescriptorDefs>
-    GraphicsPipeline(const EngineContext& instance, const EngineDevice& device, const RenderPass& renderPass,
+    GraphicsPipeline(const EngineContext& instance, const Device& device, const RenderPass& renderPass,
         ShaderBundle shaders, const RenderRegion& canvas, const SwapChainFormat& format,
         const VertexDefinitions<VertexDefs...>& vertices,
         const DescriptorDefinitions<DescriptorDefs...>& descriptors)
@@ -312,7 +312,7 @@ public:
 
     ~GraphicsPipeline() { assert(!m_initialized && "GraphicsPipeline was not destroyed!"); };
 
-    void destroy(const EngineContext& instance, const EngineDevice& device) {
+    void destroy(const EngineContext& instance, const Device& device) {
         if (!m_initialized)
             return;
 

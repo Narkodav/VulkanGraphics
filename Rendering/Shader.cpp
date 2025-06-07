@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const EngineContext& instance, const EngineDevice& device,
+Shader::Shader(const EngineContext& instance, const Device& device,
     const std::string& shaderPath)
 {
     auto shaderCode = readFile(shaderPath);
@@ -29,7 +29,7 @@ std::vector<char> Shader::readFile(const std::string& filename)
 }
 
 vk::ShaderModule Shader::createShaderModule(const EngineContext& instance, 
-    const EngineDevice& device, const std::vector<char>& code) {
+    const Device& device, const std::vector<char>& code) {
 
     vk::ShaderModuleCreateInfo createInfo{};
     createInfo.sType = vk::StructureType::eShaderModuleCreateInfo;

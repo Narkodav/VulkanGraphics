@@ -1,6 +1,6 @@
 #include "RenderPass.h"
 
-RenderPass::RenderPass(const EngineContext& instance, const EngineDevice& device, const SwapChainFormat& format)
+RenderPass::RenderPass(const EngineContext& instance, const Device& device, const SwapChainFormat& format)
 {
     std::vector<vk::AttachmentDescription> attachments;
     vk::AttachmentDescription colorAttachment{};

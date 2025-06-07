@@ -3,11 +3,14 @@
 void Engine::init(std::string engineName, std::string appName, Extent windowExtent)
 {
     m_engineContext = EngineContext(engineName, appName,
-        Version(1, 0, 0), Version(1, 0, 0));
+        Version(1, 0, 0), Version(1, 0, 0), DebugMessageSeverity::Bits::WARNING
+        | DebugMessageSeverity::Bits::ERROR);
     m_resourceManager.registerResource(&m_engineContext, "m_engineContext",
         [this]() {m_engineContext.destroy(); },
         //{},
         __FILE__, __LINE__);
+
+    m_deviceCache = PhysicalDeviceCache(m_engineContext);  
 
     m_window = Window(m_engineContext, windowExtent,
         appName, Window::Attributes::firstPersonGameAtr());
@@ -24,11 +27,53 @@ void Engine::init(std::string engineName, std::string appName, Extent windowExte
             handleResize();
         });
 
-    m_device = EngineDevice(m_engineContext, m_window);
+    DeviceRequirements requirements;
+    requirements.extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    requirements.properties = { {DeviceProperty::DEVICE_TYPE, PhysicalDeviceType::DISCRETE_GPU} };
+    requirements.features = { {DeviceFeature::GEOMETRY_SHADER, true},
+    {DeviceFeature::SAMPLER_ANISOTROPY, true} };
+
+    requirements.queueProperties.push_back(RequiredQueueProperties());
+    requirements.queueProperties.back().queueProperties
+        .insert({ QueueProperty::QUEUE_FLAGS, QueueFlags::Flags(QueueFlags::Bits::GRAPHICS | QueueFlags::Bits::TRANSFER) });
+    requirements.queueProperties.back().shouldSupportPresent = false;
+
+    requirements.queueProperties.push_back(RequiredQueueProperties());
+    requirements.queueProperties.back().shouldSupportPresent = true;
+
+    auto result = m_deviceCache.getFittingDevice(m_engineContext, m_window, requirements);
+    if (!result.isSuitable())
+        std::cout << "No suitable device found" << std::endl;
+    else std::cout << "Suitable device found" << std::endl;
+
+    //search for discrete graphics, present and transfer families
+    uint32_t graphicsIndex, presentIndex;
+
+    graphicsIndex = result.queueFamilyIndices[0].front();
+    size_t i;
+
+    for (i = 0; i < result.queueFamilyIndices[1].size(); i++)
+        if (graphicsIndex != result.queueFamilyIndices[1][i])
+        {
+            presentIndex = result.queueFamilyIndices[1][i];
+            break;
+        }
+    if (i == result.queueFamilyIndices[1].size()) {
+        presentIndex = result.queueFamilyIndices[1].front();
+    }
+
+    m_device = Device(m_engineContext, *result.device, requirements,
+        std::vector<uint32_t>{ graphicsIndex, presentIndex },
+        std::vector<uint32_t>{ 2, 1 },
+        std::vector<std::vector<float>>({ {1.0f,1.0f},{1.0f} }));
     m_resourceManager.registerResource(&m_device, "m_device",
-        [this]() {m_device.destroy(m_engineContext.getDispatchLoader()); },
+        [this]() {m_device.destroy(m_engineContext); },
         //{ "m_engineContext" },
         __FILE__, __LINE__);
+
+    m_graphicsQueue = Queue(m_engineContext, m_device, graphicsIndex, 0);
+    m_presentQueue = Queue(m_engineContext, m_device, presentIndex, 0);
+    m_transferQueue = Queue(m_engineContext, m_device, graphicsIndex, 1);
 
     //canvas just stores dimensions, so it doesn't need to have a dedicated delete function
     //but it still has to be updated at window resize
@@ -41,7 +86,9 @@ void Engine::init(std::string engineName, std::string appName, Extent windowExte
         //{ "m_device" },
         __FILE__, __LINE__);
 
-    m_swapChain = SwapChain(m_engineContext, m_device, m_window, m_renderPass, m_format);
+    m_swapChain = SwapChain(m_engineContext, m_device, m_window,
+        m_renderPass, m_format, presentIndex, graphicsIndex);
+
     m_resourceManager.registerResource(&m_swapChain, "m_swapChain",
         [this]() {m_swapChain.destroy(m_engineContext, m_device); },
         //{ "m_renderPass", "m_window" },
@@ -71,8 +118,7 @@ void Engine::init(std::string engineName, std::string appName, Extent windowExte
         //{ "m_swapChain" },
         __FILE__, __LINE__);
 
-    m_graphicsCommandPool = CommandPool(m_engineContext, m_device,
-        m_device.getBasicIndices().families[static_cast<size_t>(QueueSpecialisation::GRAPHICS)].value());
+    m_graphicsCommandPool = CommandPool(m_engineContext, m_device, graphicsIndex);
     m_resourceManager.registerResource(&m_graphicsCommandPool, "m_graphicsCommandPool",
         [this]() {
             m_graphicsCommandPool.reset(m_engineContext, m_device);
@@ -81,8 +127,7 @@ void Engine::init(std::string engineName, std::string appName, Extent windowExte
         //{ "m_device" },
         __FILE__, __LINE__);
 
-    m_temporaryBufferPool = CommandPool(m_engineContext, m_device,
-        m_device.getBasicIndices().families[static_cast<size_t>(QueueSpecialisation::TRANSFER)].value());
+    m_temporaryBufferPool = CommandPool(m_engineContext, m_device, graphicsIndex);
     m_resourceManager.registerResource(&m_temporaryBufferPool, "m_temporaryBufferPool",
         [this]() {
             m_temporaryBufferPool.reset(m_engineContext, m_device);
@@ -90,11 +135,6 @@ void Engine::init(std::string engineName, std::string appName, Extent windowExte
         },
         //{ "m_device" },
         __FILE__, __LINE__);
-
-
-    m_graphicsQueue = Queue(m_engineContext, m_device, QueueSpecialisation::GRAPHICS);
-    m_presentQueue = Queue(m_engineContext, m_device, QueueSpecialisation::PRESENT);
-    m_transferQueue = Queue(m_engineContext, m_device, QueueSpecialisation::TRANSFER);
 
     m_descriptorPool = DescriptorPool(m_engineContext, m_device, {
             DescriptorPool::Size(m_maxFramesInFlight, DescriptorType::UNIFORM_BUFFER),
@@ -207,13 +247,13 @@ void Engine::handleResize()
     if (m_window.isMinimised())
         return;
     m_device.waitIdle(m_engineContext);
-    m_device.reevaluateSwapChainSupportDetails(m_engineContext, m_window);
     m_canvas = RenderRegion::createFullWindow(m_window);
     m_format = SwapChainFormat::create(m_engineContext, m_device, m_window);
     m_camera.setAspectRatio(m_window.getFrameBufferExtent().width /
         (float)m_window.getFrameBufferExtent().height);
     m_transforms.proj = m_camera.getProjection();
-    m_swapChain.recreate(m_engineContext, m_device, m_window, m_renderPass, m_format);
+    m_swapChain.recreate(m_engineContext, m_device, m_window, m_renderPass, m_format,
+        m_presentQueue.getFamily(), m_graphicsQueue.getFamily());
 }
 
 void Engine::updateUniform()

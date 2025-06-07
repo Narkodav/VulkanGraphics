@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "EngineContext.h"
-#include "EngineDevice.h"
+#include "Device.h"
 #include "RenderPass.h"
 #include "SwapChain.h"
 #include "GraphicsPipeline.h"
