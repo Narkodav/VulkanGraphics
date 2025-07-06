@@ -15,85 +15,82 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Common.cpp">
+    <ClCompile Include="Graphics\Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\EngineContext.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\Window.cpp">
+    <ClCompile Include="Graphics\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
+    <ClCompile Include="Graphics\Rendering\SwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\SwapChain.cpp">
+    <ClCompile Include="Graphics\Rendering\GraphicsPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\GraphicsPipeline.cpp">
+    <ClCompile Include="Graphics\Rendering\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Shader.cpp">
+    <ClCompile Include="Graphics\Rendering\RenderRegion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\RenderRegion.cpp">
+    <ClCompile Include="Graphics\Rendering\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\RenderPass.cpp">
+    <ClCompile Include="Graphics\Rendering\SwapChainFormat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\SwapChainFormat.cpp">
+    <ClCompile Include="Graphics\Rendering\CommandPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\CommandPool.cpp">
+    <ClCompile Include="Graphics\Rendering\CommandBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\CommandBuffer.cpp">
+    <ClCompile Include="Graphics\Rendering\Semaphore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Semaphore.cpp">
+    <ClCompile Include="Graphics\Rendering\Fence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Fence.cpp">
+    <ClCompile Include="Graphics\Rendering\Queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Queue.cpp">
+    <ClCompile Include="Graphics\BufferDataLayouts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BufferDataLayouts.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\Buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\Buffer.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\Memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\Memory.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\MappedMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\MappedMemory.cpp">
+    <ClCompile Include="Graphics\FrameRateCalculator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FrameRateCalculator.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\DescriptorPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\DescriptorPool.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\DescriptorSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\DescriptorSet.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\WindowEvents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\WindowEvents.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\IOEvents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\IOEvents.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\Mouse.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\Keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlatformManagement\InputStateTracker.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\InputStateTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vendor\stb_image\stb_image.cpp">
@@ -102,117 +99,120 @@
     <ClCompile Include="Vendor\stb_image\stb_image_write.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryManagement\Image.cpp">
+    <ClCompile Include="Graphics\MemoryManagement\Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Sampler.cpp">
+    <ClCompile Include="Graphics\Rendering\Sampler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Flags.cpp">
+    <ClCompile Include="Graphics\Rendering\Flags.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlatformManagement\PlatformContext.cpp">
+    <ClCompile Include="Graphics\PlatformManagement\PlatformContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
+    <ClCompile Include="Graphics\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Graphics\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceCaching\PhysicalDeviceCache.cpp">
+    <ClCompile Include="Graphics\DeviceCaching\PhysicalDeviceCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceCaching\PhysicalDevice.cpp">
+    <ClCompile Include="Graphics\DeviceCaching\PhysicalDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceCaching\QueueFamily.cpp">
+    <ClCompile Include="Graphics\DeviceCaching\QueueFamily.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceCaching\PhysicalDeviceCacheTaskTables.cpp">
+    <ClCompile Include="Graphics\DeviceCaching\PhysicalDeviceCacheTaskTables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rendering\Device.cpp">
+    <ClCompile Include="Graphics\Rendering\Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Rendering\GraphicsContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Rendering\DescriptorSetLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="Graphics\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\EngineContext.h">
+    <ClInclude Include="Graphics\PlatformManagement\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\Window.h">
+    <ClInclude Include="Graphics\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
+    <ClInclude Include="Graphics\Rendering\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\SwapChain.h">
+    <ClInclude Include="Graphics\Rendering\GraphicsPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\GraphicsPipeline.h">
+    <ClInclude Include="Graphics\Rendering\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Shader.h">
+    <ClInclude Include="Graphics\Rendering\RenderRegion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\RenderRegion.h">
+    <ClInclude Include="Graphics\Rendering\RenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\RenderPass.h">
+    <ClInclude Include="Graphics\Rendering\SwapChainFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\SwapChainFormat.h">
+    <ClInclude Include="Graphics\Rendering\CommandPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\CommandPool.h">
+    <ClInclude Include="Graphics\Rendering\CommandBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\CommandBuffer.h">
+    <ClInclude Include="Graphics\Rendering\Semaphore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Semaphore.h">
+    <ClInclude Include="Graphics\Rendering\Fence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Fence.h">
+    <ClInclude Include="Graphics\Rendering\Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Queue.h">
+    <ClInclude Include="Graphics\MemoryManagement\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\Buffer.h">
+    <ClInclude Include="Graphics\MemoryManagement\Memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\Memory.h">
+    <ClInclude Include="Graphics\MemoryManagement\MappedMemory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\MappedMemory.h">
+    <ClInclude Include="Graphics\FrameRateCalculator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FrameRateCalculator.h">
+    <ClInclude Include="Graphics\MemoryManagement\DescriptorPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\DescriptorPool.h">
+    <ClInclude Include="Graphics\MemoryManagement\DescriptorSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\DescriptorSet.h">
+    <ClInclude Include="Graphics\PlatformManagement\WindowEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\WindowEvents.h">
+    <ClInclude Include="Graphics\PlatformManagement\IOEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\IOEvents.h">
+    <ClInclude Include="Graphics\PlatformManagement\Mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\Mouse.h">
+    <ClInclude Include="Graphics\PlatformManagement\Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\Keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlatformManagement\InputStateTracker.h">
+    <ClInclude Include="Graphics\PlatformManagement\InputStateTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vendor\stb_image\stb_image.h">
@@ -221,46 +221,52 @@
     <ClInclude Include="Vendor\stb_image\stb_image_write.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryManagement\Image.h">
+    <ClInclude Include="Graphics\MemoryManagement\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Sampler.h">
+    <ClInclude Include="Graphics\Rendering\Sampler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Flags.h">
+    <ClInclude Include="Graphics\Rendering\Flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlatformManagement\PlatformContext.h">
+    <ClInclude Include="Graphics\PlatformManagement\PlatformContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BufferDataLayouts.h">
+    <ClInclude Include="Graphics\BufferDataLayouts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
+    <ClInclude Include="Graphics\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Graphics\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\PhysicalDeviceCache.h">
+    <ClInclude Include="Graphics\DeviceCaching\PhysicalDeviceCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\FeatureEnum.h">
+    <ClInclude Include="Graphics\DeviceCaching\FeatureEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\PropertyEnum.h">
+    <ClInclude Include="Graphics\DeviceCaching\PropertyEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\QueuePropertyEnum.h">
+    <ClInclude Include="Graphics\DeviceCaching\QueuePropertyEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\PhysicalDevice.h">
+    <ClInclude Include="Graphics\DeviceCaching\PhysicalDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceCaching\QueueFamily.h">
+    <ClInclude Include="Graphics\DeviceCaching\QueueFamily.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rendering\Device.h">
+    <ClInclude Include="Graphics\Rendering\Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Rendering\GraphicsContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Rendering\DescriptorSetLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
