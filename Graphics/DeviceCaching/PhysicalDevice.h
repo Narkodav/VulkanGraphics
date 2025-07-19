@@ -1,6 +1,6 @@
 #pragma once
 #include "../Common.h"
-#include "../Rendering/GraphicsContext.h"
+#include "../Rendering/Context.h"
 
 #include "FeatureEnum.h"
 #include "PropertyEnum.h"
@@ -10,89 +10,92 @@
 #include <array>
 #include <set>
 
-struct SwapChainSupportDetails {
-	vk::SurfaceCapabilitiesKHR capabilities;
-	std::vector<vk::SurfaceFormatKHR> formats;
-	std::vector<vk::PresentModeKHR> presentModes;
-};
+namespace Graphics {
 
-class PhysicalDevice
-{
-private:
-	vk::PhysicalDevice m_physicalDevice;
+	struct SwapChainSupportDetails {
+		vk::SurfaceCapabilitiesKHR capabilities;
+		std::vector<vk::SurfaceFormatKHR> formats;
+		std::vector<vk::PresentModeKHR> presentModes;
+	};
 
-	std::array<std::any, static_cast<size_t>(DeviceFeature::FEATURES_NUM)> m_features;
-	std::array<std::any, static_cast<size_t>(DeviceProperty::PROPERTIES_NUM)> m_properties;
-	std::vector<QueueFamily> m_queueFamilies;
-	std::set<std::string> m_availableExtensions;
-
-public:
-	
-	PhysicalDevice() = default;
-
-	PhysicalDevice(const PhysicalDevice&) = delete;
-	PhysicalDevice(PhysicalDevice&&) = default;
-	PhysicalDevice& operator=(const PhysicalDevice&) = delete;
-	PhysicalDevice& operator=(PhysicalDevice&&) = default;
-
-	PhysicalDevice(const GraphicsContext& instance, vk::PhysicalDevice device) :
-		m_physicalDevice(device)
+	class PhysicalDevice
 	{
-		enumerateFeatures(instance);
-		enumerateProperties(instance);
-		enumerateExtensions(instance);
-		enumerateQueueFamilies(instance);
-	}
+	private:
+		vk::PhysicalDevice m_physicalDevice;
 
-	const std::any& getFeature(DeviceFeature feature) const {
-		return m_features[static_cast<size_t>(feature)];
-	}
+		std::array<std::any, static_cast<size_t>(DeviceFeature::FeaturesNum)> m_features;
+		std::array<std::any, static_cast<size_t>(DeviceProperty::PropertiesNum)> m_properties;
+		std::vector<QueueFamily> m_queueFamilies;
+		std::set<std::string> m_availableExtensions;
 
-	const std::any& getProperty(DeviceProperty property) const {
-		return m_properties[static_cast<size_t>(property)];
-	}
+	public:
 
-	template<DeviceFeature F>
-	const typename DeviceFeatureTypeTrait<F>::Type& getFeature() const {
-		return std::any_cast<const typename DeviceFeatureTypeTrait<F>::Type&>(
-			m_features[static_cast<size_t>(F)]);
-	}
+		PhysicalDevice() = default;
 
-	template<DeviceProperty P>
-	const typename DevicePropertyTypeTrait<P>::Type& getProperty() const {
-		return std::any_cast<const typename DevicePropertyTypeTrait<P>::Type&>(
-			m_properties[static_cast<size_t>(P)]);
-	}
+		PhysicalDevice(const PhysicalDevice&) = delete;
+		PhysicalDevice(PhysicalDevice&&) = default;
+		PhysicalDevice& operator=(const PhysicalDevice&) = delete;
+		PhysicalDevice& operator=(PhysicalDevice&&) = default;
 
-	const std::vector<QueueFamily>& getQueueFamilies() const { return m_queueFamilies; };
-	const std::set<std::string>& getAvailableExtensions() const { return m_availableExtensions; };
-	vk::PhysicalDevice getHandle() const { return m_physicalDevice; };
+		PhysicalDevice(const Context& instance, vk::PhysicalDevice device) :
+			m_physicalDevice(device)
+		{
+			enumerateFeatures(instance);
+			enumerateProperties(instance);
+			enumerateExtensions(instance);
+			enumerateQueueFamilies(instance);
+		}
 
-	SwapChainSupportDetails getSwapChainSupportDetails(
-		const GraphicsContext& instance, const Window& window) const
-	{
-		SwapChainSupportDetails supports;
-		supports.capabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(window.getSurface());
-		supports.formats = m_physicalDevice.getSurfaceFormatsKHR(window.getSurface());
-		supports.presentModes = m_physicalDevice.getSurfacePresentModesKHR(window.getSurface());
-		return supports;
-	}
+		const std::any& getFeature(DeviceFeature feature) const {
+			return m_features[static_cast<size_t>(feature)];
+		}
 
-private:
+		const std::any& getProperty(DeviceProperty property) const {
+			return m_properties[static_cast<size_t>(property)];
+		}
 
-	void enumerateFeatures(const GraphicsContext& instance);
-	void enumerateProperties(const GraphicsContext& instance);
-	void enumerateExtensions(const GraphicsContext& instance);
-	void enumerateQueueFamilies(const GraphicsContext& instance);
+		template<DeviceFeature F>
+		const typename DeviceFeatureTypeTrait<F>::Type& getFeature() const {
+			return std::any_cast<const typename DeviceFeatureTypeTrait<F>::Type&>(
+				m_features[static_cast<size_t>(F)]);
+		}
 
-	template<typename T>
-	void storeFeature(DeviceFeature feature, const T& value) {
-		m_features[static_cast<size_t>(feature)] = value;
-	}
+		template<DeviceProperty P>
+		const typename DevicePropertyTypeTrait<P>::Type& getProperty() const {
+			return std::any_cast<const typename DevicePropertyTypeTrait<P>::Type&>(
+				m_properties[static_cast<size_t>(P)]);
+		}
 
-	template<typename T>
-	void storeProperty(DeviceProperty property, const T& value) {
-		m_properties[static_cast<size_t>(property)] = value;
-	}
-};
+		const std::vector<QueueFamily>& getQueueFamilies() const { return m_queueFamilies; };
+		const std::set<std::string>& getAvailableExtensions() const { return m_availableExtensions; };
+		vk::PhysicalDevice getHandle() const { return m_physicalDevice; };
 
+		SwapChainSupportDetails getSwapChainSupportDetails(
+			const Context& instance, const Surface& surface) const
+		{
+			SwapChainSupportDetails supports;
+			supports.capabilities = m_physicalDevice.getSurfaceCapabilitiesKHR(surface.getSurface());
+			supports.formats = m_physicalDevice.getSurfaceFormatsKHR(surface.getSurface());
+			supports.presentModes = m_physicalDevice.getSurfacePresentModesKHR(surface.getSurface());
+			return supports;
+		}
+
+	private:
+
+		void enumerateFeatures(const Context& instance);
+		void enumerateProperties(const Context& instance);
+		void enumerateExtensions(const Context& instance);
+		void enumerateQueueFamilies(const Context& instance);
+
+		template<typename T>
+		void storeFeature(DeviceFeature feature, const T& value) {
+			m_features[static_cast<size_t>(feature)] = value;
+		}
+
+		template<typename T>
+		void storeProperty(DeviceProperty property, const T& value) {
+			m_properties[static_cast<size_t>(property)] = value;
+		}
+	};
+
+}

@@ -1,5 +1,8 @@
 #pragma once
-#include "Common.h"
+#include "Graphics/Common.h"
+
+namespace Graphics {
+
 // glm uses the right hand system, if you want a left hand system you have to configure glm with a macro
 // the reason you cannot use right and left handed system simultaneously is because certain operations 
 // like cross products and rotations differ depending on the system, so transitioning between the two would require 
@@ -441,4 +444,6 @@ public:
     const glm::vec3& forward() const { return m_forward; }
     const glm::vec3& getOrigin() const { return m_origin; }
 };
+
+} // namespace Graphics
 

@@ -157,7 +157,6 @@
   <ItemGroup>
     <ClCompile Include="Graphics\Rendering\DescriptorSetLayout.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
-    <ClCompile Include="Graphics\Engine.cpp" />
     <ClCompile Include="Graphics\DeviceCaching\PhysicalDeviceCache.cpp" />
     <ClCompile Include="Graphics\DeviceCaching\PhysicalDevice.cpp" />
     <ClCompile Include="Graphics\DeviceCaching\QueueFamily.cpp" />
@@ -174,7 +173,7 @@
     <ClCompile Include="Graphics\Rendering\CommandBuffer.cpp" />
     <ClCompile Include="Graphics\Rendering\CommandPool.cpp" />
     <ClCompile Include="Graphics\Rendering\Fence.cpp" />
-    <ClCompile Include="Graphics\Rendering\GraphicsPipeline.cpp" />
+    <ClCompile Include="Graphics\Rendering\Pipeline.cpp" />
     <ClCompile Include="Graphics\MemoryManagement\MappedMemory.cpp" />
     <ClCompile Include="Graphics\MemoryManagement\Memory.cpp" />
     <ClCompile Include="Graphics\PlatformManagement\Mouse.cpp" />
@@ -183,7 +182,7 @@
     <ClCompile Include="Graphics\Rendering\RenderRegion.cpp" />
     <ClCompile Include="Graphics\ResourceManager.cpp" />
     <ClCompile Include="Graphics\Common.cpp" />
-    <ClCompile Include="Graphics\Rendering\GraphicsContext.cpp" />
+    <ClCompile Include="Graphics\Rendering\Context.cpp" />
     <ClCompile Include="Graphics\Rendering\Sampler.cpp" />
     <ClCompile Include="Graphics\Rendering\Semaphore.cpp" />
     <ClCompile Include="Graphics\Rendering\Shader.cpp" />
@@ -194,6 +193,7 @@
     <ClCompile Include="Graphics\PlatformManagement\Window.cpp" />
     <ClCompile Include="Graphics\PlatformManagement\WindowEvents.cpp" />
     <ClCompile Include="Graphics\MemoryManagement\Image.cpp" />
+    <ClCompile Include="Graphics\Rendering\Surface.cpp" />
     <ClCompile Include="Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Vendor\stb_image\stb_image_write.cpp" />
   </ItemGroup>
@@ -204,7 +204,6 @@
     <ClInclude Include="Graphics\DeviceCaching\FeatureEnum.h" />
     <ClInclude Include="Graphics\DeviceCaching\PropertyEnum.h" />
     <ClInclude Include="Graphics\DeviceCaching\QueuePropertyEnum.h" />
-    <ClInclude Include="Graphics\Engine.h" />
     <ClInclude Include="Graphics\DeviceCaching\PhysicalDeviceCache.h" />
     <ClInclude Include="Graphics\DeviceCaching\PhysicalDevice.h" />
     <ClInclude Include="Graphics\DeviceCaching\QueueFamily.h" />
@@ -220,7 +219,7 @@
     <ClInclude Include="Graphics\Rendering\CommandBuffer.h" />
     <ClInclude Include="Graphics\Rendering\CommandPool.h" />
     <ClInclude Include="Graphics\Rendering\Fence.h" />
-    <ClInclude Include="Graphics\Rendering\GraphicsPipeline.h" />
+    <ClInclude Include="Graphics\Rendering\Pipeline.h" />
     <ClInclude Include="Graphics\MemoryManagement\MappedMemory.h" />
     <ClInclude Include="Graphics\MemoryManagement\Memory.h" />
     <ClInclude Include="Graphics\PlatformManagement\Mouse.h" />
@@ -229,7 +228,7 @@
     <ClInclude Include="Graphics\Rendering\RenderRegion.h" />
     <ClInclude Include="Graphics\ResourceManager.h" />
     <ClInclude Include="Graphics\Common.h" />
-    <ClInclude Include="Graphics\Rendering\GraphicsContext.h" />
+    <ClInclude Include="Graphics\Rendering\Context.h" />
     <ClInclude Include="Graphics\Rendering\Sampler.h" />
     <ClInclude Include="Graphics\Rendering\Semaphore.h" />
     <ClInclude Include="Graphics\Rendering\Shader.h" />
@@ -239,15 +238,16 @@
     <ClInclude Include="Graphics\PlatformManagement\Window.h" />
     <ClInclude Include="Graphics\PlatformManagement\WindowEvents.h" />
     <ClInclude Include="Graphics\MemoryManagement\Image.h" />
+    <ClInclude Include="Graphics\Rendering\Surface.h" />
     <ClInclude Include="Vendor\stb_image\stb_image.h" />
     <ClInclude Include="Vendor\stb_image\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-  <CustomBuild Include="**/*.vert;**/*.frag">
-    <Command>"E:/Program Files (x86)/API/Vulkan/Bin/glslc.exe" "%(FullPath)" -o "%(RootDir)%(Directory)%(Filename)%(Extension).spv"</Command>
-    <Outputs>%(RootDir)%(Directory)%(Filename)%(Extension).spv</Outputs>
-    <Message>Compiling shader %(Filename)%(Extension)</Message>
-  </CustomBuild>
+    <CustomBuild Include="**/*.vert;**/*.frag">
+      <Command>"E:/Program Files (x86)/API/Vulkan/Bin/glslc.exe" "%(FullPath)" -o "%(RootDir)%(Directory)%(Filename)%(Extension).spv"</Command>
+      <Outputs>%(RootDir)%(Directory)%(Filename)%(Extension).spv</Outputs>
+      <Message>Compiling shader %(Filename)%(Extension)</Message>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

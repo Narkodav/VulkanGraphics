@@ -1,6 +1,6 @@
 #pragma once
 #include "../Common.h"
-#include "../Rendering/GraphicsContext.h"
+#include "../Rendering/Context.h"
 #include "../PlatformManagement/Window.h"
 
 #include "FeatureEnum.h"
@@ -13,45 +13,48 @@
 #include <type_traits>
 #include <typeindex>
 
-class PhysicalDevice;
+namespace Graphics {
 
-class QueueFamily
-{
-	friend class PhysicalDevice;
-private:
-	std::array<std::any, static_cast<size_t>(QueueProperty::PROPERTIES_NUM)> m_properties;
-	uint32_t m_familyIndex;
+	class PhysicalDevice;
 
-public:
-	QueueFamily() = default;
+	class QueueFamily
+	{
+		friend class PhysicalDevice;
+	private:
+		std::array<std::any, static_cast<size_t>(QueueProperty::PropertiesNum)> m_properties;
+		uint32_t m_familyIndex;
 
-	QueueFamily(const QueueFamily&) = delete;
-	QueueFamily(QueueFamily&&) = default;
-	QueueFamily& operator=(const QueueFamily&) = delete;
-	QueueFamily& operator=(QueueFamily&&) = default;
+	public:
+		QueueFamily() = default;
 
-	QueueFamily(const vk::QueueFamilyProperties2& properties, uint32_t familyIndex);
+		QueueFamily(const QueueFamily&) = delete;
+		QueueFamily(QueueFamily&&) = default;
+		QueueFamily& operator=(const QueueFamily&) = delete;
+		QueueFamily& operator=(QueueFamily&&) = default;
 
-	const std::any& getProperty(QueueProperty property) const {
-		return m_properties[static_cast<size_t>(property)];
-	}
+		QueueFamily(const vk::QueueFamilyProperties2& properties, uint32_t familyIndex);
 
-	template<QueueProperty P>
-	const typename QueuePropertyTypeTrait<P>::Type& getProperty() const {
-		return std::any_cast<const typename QueuePropertyTypeTrait<P>::Type&>(
-			m_properties[static_cast<size_t>(P)]);
-	}
+		const std::any& getProperty(QueueProperty property) const {
+			return m_properties[static_cast<size_t>(property)];
+		}
 
-	uint32_t getFamilyIndex() const { return m_familyIndex; };	
+		template<QueueProperty P>
+		const typename QueuePropertyTypeTrait<P>::Type& getProperty() const {
+			return std::any_cast<const typename QueuePropertyTypeTrait<P>::Type&>(
+				m_properties[static_cast<size_t>(P)]);
+		}
 
-private:
+		uint32_t getFamilyIndex() const { return m_familyIndex; };
 
-	bool getSurfaceSupport(const GraphicsContext& instance, const Window& window,
-		vk::PhysicalDevice& physicalDevice) const;
+	private:
 
-	template<typename T>
-	void storeProperty(QueueProperty property, const T& value) {
-		m_properties[static_cast<size_t>(property)] = value;
-	}
-};
+		bool getSurfaceSupport(const Context& instance, const Surface& surface,
+			vk::PhysicalDevice& physicalDevice) const;
 
+		template<typename T>
+		void storeProperty(QueueProperty property, const T& value) {
+			m_properties[static_cast<size_t>(property)] = value;
+		}
+	};
+
+}

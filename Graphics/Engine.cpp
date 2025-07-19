@@ -289,7 +289,7 @@ void Engine::handleInputs()
     m_mouse.refreshState();
 }
 
-void Engine::handleResize()
+void Engine::handleResize(const Extent& extent)
 {
     if (m_window.isMinimised())
         return;

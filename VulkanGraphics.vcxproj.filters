@@ -27,7 +27,7 @@
     <ClCompile Include="Graphics\Rendering\SwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Rendering\GraphicsPipeline.cpp">
+    <ClCompile Include="Graphics\Rendering\Pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Rendering\Shader.cpp">
@@ -111,9 +111,6 @@
     <ClCompile Include="Graphics\PlatformManagement\PlatformContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -132,10 +129,13 @@
     <ClCompile Include="Graphics\Rendering\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Rendering\GraphicsContext.cpp">
+    <ClCompile Include="Graphics\Rendering\Context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Rendering\DescriptorSetLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Rendering\Surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,7 +152,7 @@
     <ClInclude Include="Graphics\Rendering\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Rendering\GraphicsPipeline.h">
+    <ClInclude Include="Graphics\Rendering\Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Rendering\Shader.h">
@@ -236,9 +236,6 @@
     <ClInclude Include="Graphics\BufferDataLayouts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -263,18 +260,26 @@
     <ClInclude Include="Graphics\Rendering\Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Rendering\GraphicsContext.h">
+    <ClInclude Include="Graphics\Rendering\Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Rendering\DescriptorSetLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Rendering\Surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\basic.vert" />
-    <None Include="Shaders\basic.frag" />
-    <None Include="Shaders\compile.bat">
-      <Filter>Source Files</Filter>
-    </None>
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="**/*.vert;**/*.frag" />
   </ItemGroup>
 </Project>

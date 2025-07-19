@@ -1,30 +1,34 @@
 #pragma once
 #include "../Rendering/Flags.h"
 
-enum class QueueProperty : size_t {
-    QUEUE_FLAGS,                                // expects std::any containing QueueFlags::Flags
-    QUEUE_COUNT,                                // expects std::any containing uint32_t (min amount of queues)
-    TIMESTAMP_VALID_BITS,                       // expects std::any containing uint32_t
-    MIN_IMAGE_TRANSFER_GRANULARITY,             // expects std::any containing std::array<uint32_t, 3>
+namespace Graphics {
 
-    PROPERTIES_NUM
-};
+    enum class QueueProperty : size_t {
+        QueueFlags,                                // expects std::any containing QueueFlags::Flags
+        QueueCount,                                // expects std::any containing uint32_t (min amount of queues)
+        TimestampValidBits,                       // expects std::any containing uint32_t
+        MinImageTransferGranularity,             // expects std::any containing std::array<uint32_t, 3>
 
-template<QueueProperty F>
-struct QueuePropertyTypeTrait;
-template<> struct QueuePropertyTypeTrait<QueueProperty::QUEUE_FLAGS>
-{
-    using Type = QueueFlags::Flags;
-};
-template<> struct QueuePropertyTypeTrait<QueueProperty::QUEUE_COUNT>
-{
-    using Type = uint32_t;
-};
-template<> struct QueuePropertyTypeTrait<QueueProperty::TIMESTAMP_VALID_BITS>
-{
-    using Type = uint32_t;
-};
-template<> struct QueuePropertyTypeTrait<QueueProperty::MIN_IMAGE_TRANSFER_GRANULARITY>
-{
-    using Type = std::array<uint32_t, 3>;
-};
+        PropertiesNum
+    };
+
+    template<QueueProperty F>
+    struct QueuePropertyTypeTrait;
+    template<> struct QueuePropertyTypeTrait<QueueProperty::QueueFlags>
+    {
+        using Type = QueueFlags::Flags;
+    };
+    template<> struct QueuePropertyTypeTrait<QueueProperty::QueueCount>
+    {
+        using Type = uint32_t;
+    };
+    template<> struct QueuePropertyTypeTrait<QueueProperty::TimestampValidBits>
+    {
+        using Type = uint32_t;
+    };
+    template<> struct QueuePropertyTypeTrait<QueueProperty::MinImageTransferGranularity>
+    {
+        using Type = std::array<uint32_t, 3>;
+    };
+
+}

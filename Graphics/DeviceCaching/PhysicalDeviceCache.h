@@ -1,6 +1,6 @@
 #pragma once
 #include "../Common.h"
-#include "../Rendering/GraphicsContext.h"
+#include "../Rendering/Context.h"
 
 #include "FeatureEnum.h"
 #include "PropertyEnum.h"
@@ -13,93 +13,95 @@
 #include <any>
 #include <functional>
 
+namespace Graphics {
 
-using RequiredFeatures = std::map<DeviceFeature, std::any>;
-using RequiredProperties = std::map<DeviceProperty, std::any>;
-using RequiredExtensions = std::set<std::string>;
+	using RequiredFeatures = std::map<DeviceFeature, std::any>;
+	using RequiredProperties = std::map<DeviceProperty, std::any>;
+	using RequiredExtensions = std::set<std::string>;
 
-struct RequiredQueueProperties
-{	
-	std::map<QueueProperty, std::any> queueProperties;
-	bool shouldSupportPresent = false;
-};
-
-struct DeviceRequirements
-{
-	RequiredFeatures features;
-	RequiredProperties properties;
-	RequiredExtensions extensions;
-
-	std::vector<RequiredQueueProperties> queueProperties;
-};
-
-//device will be nullptr if not found
-//returns a vector containing vectors of suitable queues for each queue requirement
-struct DeviceSearchResult
-{
-	const PhysicalDevice* device = nullptr;
-	std::vector<std::vector<uint32_t>> queueFamilyIndices;
-
-	inline bool isSuitable() { return device != nullptr; };
-
-	static DeviceSearchResult unsuitable() { return DeviceSearchResult(); };
-	static DeviceSearchResult suitable(
-		const PhysicalDevice& device, std::vector<std::vector<uint32_t>>&& queueFamilyIndices) 
+	struct RequiredQueueProperties
 	{
-		return DeviceSearchResult{ &device , std::move(queueFamilyIndices) };
+		std::map<QueueProperty, std::any> queueProperties;
+		bool shouldSupportPresent = false;
 	};
-};
 
-class PhysicalDeviceCache
-{
-	using TaskTableSignature = std::function<bool(const std::any&, const std::any&)>;
-private:
-	std::vector<PhysicalDevice> m_systemDevices;
+	struct DeviceRequirements
+	{
+		RequiredFeatures features;
+		RequiredProperties properties;
+		RequiredExtensions extensions;
 
-	static const std::array<TaskTableSignature,
-		static_cast<size_t>(DeviceFeature::FEATURES_NUM)> featureChecks;
-	static const std::array<TaskTableSignature,
-		static_cast<size_t>(DeviceProperty::PROPERTIES_NUM)> propertyChecks;
-	static const std::array<TaskTableSignature,
-		static_cast<size_t>(QueueProperty::PROPERTIES_NUM)> queuePropertyChecks;
+		std::vector<RequiredQueueProperties> queueProperties;
+	};
 
-public:
-	PhysicalDeviceCache() = default;
+	//device will be nullptr if not found
+	//returns a vector containing vectors of suitable queues for each queue requirement
+	struct DeviceSearchResult
+	{
+		const PhysicalDevice* device = nullptr;
+		std::vector<std::vector<uint32_t>> queueFamilyIndices;
 
-	PhysicalDeviceCache(const PhysicalDeviceCache&) = delete;
-	PhysicalDeviceCache& operator=(const PhysicalDeviceCache&) = delete;
+		inline bool isSuitable() { return device != nullptr; };
 
-	PhysicalDeviceCache(PhysicalDeviceCache&&) = default;
-	PhysicalDeviceCache& operator=(PhysicalDeviceCache&&) = default;
+		static DeviceSearchResult unsuitable() { return DeviceSearchResult(); };
+		static DeviceSearchResult suitable(
+			const PhysicalDevice& device, std::vector<std::vector<uint32_t>>&& queueFamilyIndices)
+		{
+			return DeviceSearchResult{ &device , std::move(queueFamilyIndices) };
+		};
+	};
 
-	PhysicalDeviceCache(const GraphicsContext& instance);
+	class PhysicalDeviceCache
+	{
+		using TaskTableSignature = std::function<bool(const std::any&, const std::any&)>;
+	private:
+		std::vector<PhysicalDevice> m_systemDevices;
 
-	//this version will check for queue present support if required
-	DeviceSearchResult getFittingDevice(const GraphicsContext& instance,
-		const Window& window, const DeviceRequirements& requirements);
+		static const std::array<TaskTableSignature,
+			static_cast<size_t>(DeviceFeature::FeaturesNum)> featureChecks;
+		static const std::array<TaskTableSignature,
+			static_cast<size_t>(DeviceProperty::PropertiesNum)> propertyChecks;
+		static const std::array<TaskTableSignature,
+			static_cast<size_t>(QueueProperty::PropertiesNum)> queuePropertyChecks;
 
-	//this version will not check for queue present support
-	DeviceSearchResult getFittingDevice(const DeviceRequirements& requirements);
+	public:
+		PhysicalDeviceCache() = default;
 
-	const std::vector<PhysicalDevice>& getCachedDevices() { return m_systemDevices; };
+		PhysicalDeviceCache(const PhysicalDeviceCache&) = delete;
+		PhysicalDeviceCache& operator=(const PhysicalDeviceCache&) = delete;
 
-	//this version will check for queue present support if required
-	static DeviceSearchResult checkDeviceSuitability(const GraphicsContext& instance,
-		const Window& window, const DeviceRequirements& requirements,
-		const PhysicalDevice& device);
+		PhysicalDeviceCache(PhysicalDeviceCache&&) = default;
+		PhysicalDeviceCache& operator=(PhysicalDeviceCache&&) = default;
 
-	//this version will not check for queue present support
-	static DeviceSearchResult checkDeviceSuitability(
-		const DeviceRequirements& requirements, const PhysicalDevice& device);
+		PhysicalDeviceCache(const Context& instance);
 
-	//this version will check for queue present support
-	static bool checkQueueFamilySuitability(const GraphicsContext& instance,
-		const PhysicalDevice& device, const Window& window,
-		const std::map<QueueProperty, std::any>& requirements,
-		const QueueFamily& queueFamily);
+		//this version will check for queue present support if required
+		DeviceSearchResult getFittingDevice(const Context& instance,
+			const Surface& surface, const DeviceRequirements& requirements);
 
-	//this version will not check for queue present support
-	static bool checkQueueFamilySuitability(const std::map<QueueProperty,
-		std::any>& requirements, const QueueFamily& queueFamily);
-};
+		//this version will not check for queue present support
+		DeviceSearchResult getFittingDevice(const DeviceRequirements& requirements);
 
+		const std::vector<PhysicalDevice>& getCachedDevices() { return m_systemDevices; };
+
+		//this version will check for queue present support if required
+		static DeviceSearchResult checkDeviceSuitability(const Context& instance,
+			const Surface& surface, const DeviceRequirements& requirements,
+			const PhysicalDevice& device);
+
+		//this version will not check for queue present support
+		static DeviceSearchResult checkDeviceSuitability(
+			const DeviceRequirements& requirements, const PhysicalDevice& device);
+
+		//this version will check for queue present support
+		static bool checkQueueFamilySuitability(const Context& instance,
+			const PhysicalDevice& device, const Surface& surface,
+			const std::map<QueueProperty, std::any>& requirements,
+			const QueueFamily& queueFamily);
+
+		//this version will not check for queue present support
+		static bool checkQueueFamilySuitability(const std::map<QueueProperty,
+			std::any>& requirements, const QueueFamily& queueFamily);
+	};
+
+}

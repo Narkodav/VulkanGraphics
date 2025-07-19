@@ -1,10 +1,11 @@
 #pragma once
 #include "../Common.h"
-#include "../Rendering/GraphicsContext.h"
+#include "../Rendering/Context.h"
 #include "MultiThreading/EventSuperSystem.h"
 #include "WindowEvents.h"
 #include "IOEvents.h"
 #include "PlatformContext.h"
+#include "../Rendering/Surface.h"
 
 class Window
 {
@@ -12,33 +13,33 @@ public:
     using EventManager = MT::EventSuperSystem<WindowEventPolicy, IOEventPolicy>;
 
     enum class CursorMode {
-        NORMAL = GLFW_CURSOR_NORMAL,
-        HIDDEN = GLFW_CURSOR_HIDDEN,
-        DISABLED = GLFW_CURSOR_DISABLED  // For raw motion input
+        Normal = GLFW_CURSOR_NORMAL,
+        Hidden = GLFW_CURSOR_HIDDEN,
+        Disabled = GLFW_CURSOR_DISABLED  // For raw motion input
     };
 
     struct Attributes
     {
         enum class Type {
             // Window behavior
-            RESIZABLE,                  // bool
-            VISIBLE,                    // bool
-            DECORATED,                  // bool
-            FOCUSED,                    // bool
-            AUTO_ICONIFY,               // bool
-            FLOATING,                   // bool
-            MAXIMIZED,                  // bool
-            CENTER_CURSOR,              // bool
-            TRANSPARENT_FRAMEBUFFER,    // bool
-            FOCUS_ON_SHOW,              // bool
+            Resizable,                  // bool
+            Visible,                    // bool
+            Decorated,                  // bool
+            Focused,                    // bool
+            AutoIconify,                // bool
+            Floating,                   // bool
+            Maximized,                  // bool
+            CenterCursor,               // bool
+            TransparentFramebuffer,     // bool
+            FocusOnShow,                // bool
 
             // Framebuffer settings
-            SRGB_CAPABLE,               // bool
-            DOUBLE_BUFFER,              // bool
-            SAMPLES,                    // int
+            SrgbCapable,                // bool
+            DoubleBuffer,               // bool
+            Samples,                    // int
 
             // Input mode
-            CURSOR_MODE,                // CursorMode enum
+            CursorMode,                 // CursorMode enum
         };
 
         // Window behavior
@@ -53,7 +54,7 @@ public:
         bool transparentFramebuffer = false;    // GLFW_TRANSPARENT_FRAMEBUFFER
         bool focusOnShow = true;                // GLFW_FOCUS_ON_SHOW
 
-        CursorMode cursorMode = CursorMode::NORMAL;
+        CursorMode cursorMode = CursorMode::Normal;
 
         // Framebuffer settings
         int samples = 0;                 // GLFW_SAMPLES (MSAA)
@@ -67,7 +68,7 @@ public:
         static Attributes firstPersonGameAtr() {
             Attributes atr;
             atr.centerCursor = true;
-            atr.cursorMode = CursorMode::DISABLED;
+            atr.cursorMode = CursorMode::Disabled;
             atr.maximized = true;
             return atr;
         }
@@ -77,10 +78,9 @@ public:
     using IOEventSubscription = MT::EventSystem<IOEventPolicy>::Subscription;
 
 private:
-    vk::SurfaceKHR m_surface;
     GLFWwindow* m_window = nullptr;
-    Extent m_windowExtent; //extent in window coordinates
-    Extent m_frameBufferExtent; //extent in pixels, represents actual physical window size, use this for rendering
+    Graphics::Extent m_windowExtent; //extent in window coordinates
+    Graphics::Extent m_frameBufferExtent; //extent in pixels, represents actual physical window size, use this for rendering
     std::string m_windowText;
 
     Attributes m_attributes;
@@ -89,22 +89,21 @@ private:
     bool m_initialized = false;
 
 public:
-    Window() : m_surface(nullptr), m_window(nullptr),
+    Window() : m_window(nullptr),
         m_windowExtent({ 0, 0 }), m_windowText(""),
         m_initialized(false) {
     };
 
-    Window(const GraphicsContext& context, const Extent& windowExtent,
-        const std::string& windowText, const Attributes& attr);
+    Window(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr);
 
-    void init(const GraphicsContext& context, const Extent& windowExtent,
-        const std::string& windowText, const Attributes& attr);
+    void init(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr);
+
+    Graphics::Surface createSurface(const Graphics::Context& context) const;
 
     Window(Window&& other) noexcept {
-        m_surface = std::exchange(other.m_surface, nullptr);
         m_window = std::exchange(other.m_window, nullptr);
-        m_windowExtent = std::exchange(other.m_windowExtent, Extent{ 0, 0 });
-        m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Extent{ 0, 0 });
+        m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent{ 0, 0 });
+        m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent{ 0, 0 });
         m_windowText = std::exchange(other.m_windowText, "");
 
         m_attributes = std::exchange(other.m_attributes, Attributes());
@@ -121,10 +120,9 @@ public:
         if (this != &other) {
             assert(!m_initialized && "Cannot move to an initialised window");
 
-            m_surface = std::exchange(other.m_surface, nullptr);
             m_window = std::exchange(other.m_window, nullptr);
-            m_windowExtent = std::exchange(other.m_windowExtent, Extent{ 0, 0 });
-            m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Extent{ 0, 0 });
+            m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent{ 0, 0 });
+            m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent{ 0, 0 });
             m_windowText = std::exchange(other.m_windowText, "");
 
             m_attributes = std::exchange(other.m_attributes, Attributes());
@@ -143,13 +141,12 @@ public:
 
     ~Window() { assert(!m_initialized && "Window was not destroyed!"); };
 
-    const vk::SurfaceKHR& getSurface() const { return m_surface; };
-    const Extent& getWindowExtent() const { return m_windowExtent; };
-    const Extent& getFrameBufferExtent() const { return m_frameBufferExtent; };
+    const Graphics::Extent& getWindowExtent() const { return m_windowExtent; };
+    const Graphics::Extent& getFrameBufferExtent() const { return m_frameBufferExtent; };
     float getAspectRatio() const { return m_windowExtent.width / (float)m_windowExtent.height; };
     const std::string& getWindowText() const { return m_windowText; };
     GLFWwindow* getWindowHandle() const { return m_window; };
-    void destroy(const GraphicsContext& context);
+    void destroy();
 
     bool shouldClose() const
     {
@@ -206,77 +203,77 @@ public:
     };
 
     template<>
-    Window& setAttribute<Attributes::Type::RESIZABLE>(bool value) {
+    Window& setAttribute<Attributes::Type::Resizable>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_RESIZABLE, value);
         m_attributes.resizable = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::VISIBLE>(bool value) {
+    Window& setAttribute<Attributes::Type::Visible>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_VISIBLE, value);
         m_attributes.visible = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::DECORATED>(bool value) {
+    Window& setAttribute<Attributes::Type::Decorated>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_DECORATED, value);
         m_attributes.decorated = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::FOCUSED>(bool value) {
+    Window& setAttribute<Attributes::Type::Focused>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_FOCUSED, value);
         m_attributes.focused = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::AUTO_ICONIFY>(bool value) {
+    Window& setAttribute<Attributes::Type::AutoIconify>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_AUTO_ICONIFY, value);
         m_attributes.autoIconify = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::FLOATING>(bool value) {
+    Window& setAttribute<Attributes::Type::Floating>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_FLOATING, value);
         m_attributes.floating = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::MAXIMIZED>(bool value) {
+    Window& setAttribute<Attributes::Type::Maximized>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_MAXIMIZED, value);
         m_attributes.maximized = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::CENTER_CURSOR>(bool value) {
+    Window& setAttribute<Attributes::Type::CenterCursor>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_CENTER_CURSOR, value);
         m_attributes.centerCursor = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::TRANSPARENT_FRAMEBUFFER>(bool value) {
+    Window& setAttribute<Attributes::Type::TransparentFramebuffer>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_TRANSPARENT_FRAMEBUFFER, value);
         m_attributes.transparentFramebuffer = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::FOCUS_ON_SHOW>(bool value) {
+    Window& setAttribute<Attributes::Type::FocusOnShow>(bool value) {
         glfwSetWindowAttrib(m_window, GLFW_FOCUS_ON_SHOW, value);
         m_attributes.focusOnShow = value;
         return *this;
     }
 
     template<>
-    Window& setAttribute<Attributes::Type::CURSOR_MODE>(CursorMode value) {
+    Window& setAttribute<Attributes::Type::CursorMode>(CursorMode value) {
         glfwSetInputMode(m_window, GLFW_CURSOR, static_cast<int>(value));
         m_attributes.cursorMode = value;
         return *this;

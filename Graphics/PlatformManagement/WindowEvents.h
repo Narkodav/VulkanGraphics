@@ -3,70 +3,70 @@
 
 enum class WindowEvents
 {
-    WINDOW_RESIZED,
-    FRAME_BUFFER_RESIZED,
-    WINDOW_MOVED,
-    WINDOW_FOCUSED,
-    WINDOW_MINIMIZED,
-    WINDOW_MAXIMIZED,
-    WINDOW_CLOSED,
-    WINDOW_REFRESH,
-    WINDOW_CONTENT_SCALE_CHANGED,
-    NUM
+    WindowResized,
+    FrameBufferResized,
+    WindowMoved,
+    WindowFocused,
+    WindowMinimized,
+    WindowMaximized,
+    WindowClosed,
+    WindowRefresh,
+    WindowContentScaleChanged,
+    Num
 };
 
-struct WindowEventPolicy : MT::EventPolicy<WindowEvents, static_cast<size_t>(WindowEvents::NUM)> {};
+struct WindowEventPolicy : MT::EventPolicy<WindowEvents, static_cast<size_t>(WindowEvents::Num)> {};
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_RESIZED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowResized> {
     using Signature = void(int width, int height);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::FRAME_BUFFER_RESIZED> {
+struct WindowEventPolicy::Traits<WindowEvents::FrameBufferResized> {
     using Signature = void(int width, int height);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_MOVED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowMoved> {
     using Signature = void(int x, int y);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_FOCUSED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowFocused> {
     using Signature = void(bool focused);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_MINIMIZED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowMinimized> {
     using Signature = void(bool minimized);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_MAXIMIZED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowMaximized> {
     using Signature = void(bool maximized);
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_CLOSED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowClosed> {
     using Signature = void();
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_REFRESH> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowRefresh> {
     using Signature = void();
 };
 
 template<>
 template<>
-struct WindowEventPolicy::Traits<WindowEvents::WINDOW_CONTENT_SCALE_CHANGED> {
+struct WindowEventPolicy::Traits<WindowEvents::WindowContentScaleChanged> {
     using Signature = void(float xscale, float yscale);
 };

@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <functional>
 
+namespace Graphics {
+
 //CRTP wrapper to forward functions from a wrapped object
 
 template<typename T>
@@ -13,7 +15,7 @@ protected:
 public:
     // Forward constructors
     template<typename... Args>
-    Forwarder(Args&&... args) : handle(std::forward<Args>(args)...) {}
+    Forwarder(Args&&... args) : m_handle(std::forward<Args>(args)...) {}
 
     // Forward all const member functions
     template<typename... Args>
@@ -35,3 +37,5 @@ public:
     const T& raw() const { return m_handle; }
     T& raw() { return m_handle; }
 };
+
+} // namespace Graphics

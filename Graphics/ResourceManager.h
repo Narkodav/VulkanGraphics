@@ -9,99 +9,100 @@
 #define _USE_REDOURCE_MANAGER_QUEUE_BASED_
 
 #ifdef _USE_REDOURCE_MANAGER_QUEUE_BASED_
+namespace Graphics {
 
-class ResourceManager
-{
-public:
-    struct ResourceInfo {
-        std::string name;
-        std::string type;
-        void* handle;
-        size_t size;
-        std::string creationFile;
-        int creationLine;
-    };
-
-private:
-    std::vector<std::function<void()>> cleanupStack;
-    std::unordered_map<void*, ResourceInfo> activeResources;
-
-public:
-
-    // Execute all cleanup functions in reverse order
-    void cleanup() {
-        while (!cleanupStack.empty()) {
-            cleanupStack.back()();  // Execute last function
-            cleanupStack.pop_back();  // Remove it from stack
-        }
-    }
-
-    ~ResourceManager() {
-        if (!activeResources.empty()) {
-            std::cerr << "WARNING: Resource leaks detected!\n";
-            printActiveResources();
-        }
-        cleanup();
-    }
-
-    template<typename T>
-    void registerResource(T* handle,
-        const std::string& name,
-        std::function<void()> cleanup,
-        const char* file = __FILE__,
-        int line = __LINE__,
-        size_t size = 0)
+    class ResourceManager
     {
-        // Track the resource first
-        ResourceInfo info{
-            name,
-            typeid(T).name(),
-            static_cast<void*>(handle),
-            size,
-            file,
-            line
+    public:
+        struct ResourceInfo {
+            std::string name;
+            std::string type;
+            void* handle;
+            size_t size;
+            std::string creationFile;
+            int creationLine;
         };
 
-        activeResources[static_cast<void*>(handle)] = info;
-        cleanupStack.push_back([this, handle, cleanup]() {
-            cleanup();  // Run the provided cleanup first
-            untrackResource(static_cast<void*>(handle));  // Then remove from tracking
-            });
-    }
+    private:
+        std::vector<std::function<void()>> cleanupStack;
+        std::unordered_map<void*, ResourceInfo> activeResources;
 
-    void untrackResource(void* handle) {
-        activeResources.erase(handle);
-    }
+    public:
 
-    // Debug utilities
-    void printActiveResources() const {
-        std::cout << "Active Resources:\n";
-        for (const auto& [handle, info] : activeResources) {
-            std::cout << "Resource: " << info.name
-                << "\n  Type: " << info.type
-                << "\n  Handle: " << handle
-                << "\n  Size: " << info.size << " bytes"
-                << "\n  Created at: " << info.creationFile << ":" << info.creationLine
-                << "\n\n";
+        // Execute all cleanup functions in reverse order
+        void cleanup() {
+            while (!cleanupStack.empty()) {
+                cleanupStack.back()();  // Execute last function
+                cleanupStack.pop_back();  // Remove it from stack
+            }
         }
-    }
 
-    size_t getTotalResourceMemory() const {
-        size_t total = 0;
-        for (const auto& [handle, info] : activeResources) {
-            total += info.size;
+        ~ResourceManager() {
+            if (!activeResources.empty()) {
+                std::cerr << "WARNING: Resource leaks detected!\n";
+                printActiveResources();
+            }
+            cleanup();
         }
-        return total;
-    }
 
-    bool hasResource(void* handle) const {
-        return activeResources.contains(handle);
-    }
+        template<typename T>
+        void registerResource(T* handle,
+            const std::string& name,
+            std::function<void()> cleanup,
+            const char* file = __FILE__,
+            int line = __LINE__,
+            size_t size = 0)
+        {
+            // Track the resource first
+            ResourceInfo info{
+                name,
+                typeid(T).name(),
+                static_cast<void*>(handle),
+                size,
+                file,
+                line
+            };
 
-    size_t getResourceCount() const {
-        return activeResources.size();
-    }
-};
+            activeResources[static_cast<void*>(handle)] = info;
+            cleanupStack.push_back([this, handle, cleanup]() {
+                cleanup();  // Run the provided cleanup first
+                untrackResource(static_cast<void*>(handle));  // Then remove from tracking
+                });
+        }
+
+        void untrackResource(void* handle) {
+            activeResources.erase(handle);
+        }
+
+        // Debug utilities
+        void printActiveResources() const {
+            std::cout << "Active Resources:\n";
+            for (const auto& [handle, info] : activeResources) {
+                std::cout << "Resource: " << info.name
+                    << "\n  Type: " << info.type
+                    << "\n  Handle: " << handle
+                    << "\n  Size: " << info.size << " bytes"
+                    << "\n  Created at: " << info.creationFile << ":" << info.creationLine
+                    << "\n\n";
+            }
+        }
+
+        size_t getTotalResourceMemory() const {
+            size_t total = 0;
+            for (const auto& [handle, info] : activeResources) {
+                total += info.size;
+            }
+            return total;
+        }
+
+        bool hasResource(void* handle) const {
+            return activeResources.contains(handle);
+        }
+
+        size_t getResourceCount() const {
+            return activeResources.size();
+        }
+    };
 
 
 #else
@@ -230,9 +231,9 @@ private:
             auto it = resources.find(dependency);
             if (it != resources.end()) {
                 it->second.dependents.erase(
-                std::remove(it->second.dependents.begin(),
-                    it->second.dependents.end(),
-                    resource.name));
+                    std::remove(it->second.dependents.begin(),
+                        it->second.dependents.end(),
+                        resource.name));
             }
         }
 
@@ -271,3 +272,4 @@ private:
 };
 
 #endif
+}

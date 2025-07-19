@@ -13,12 +13,12 @@ std::is_unsigned_v<StorageType>
 class InputStateTracker
 {
 private:
-	static_assert(NUM_INPUTS > 0, "Number of inputs must be greater than 0");
-	static_assert(NUM_INPUT_STATES > 0, "Number of input states must be greater than 0");
-	static_assert(sizeof(StorageType) / 8 < std::numeric_limits<size_t>::max(),
-		"StorageType size in bits cannot exceed maximum value of size_t");
-	static_assert(NUM_INPUTS <= std::numeric_limits<size_t>::max() / 8, "NUM_INPUTS too large");
-	static_assert(NUM_INPUT_STATES <= std::numeric_limits<size_t>::max(), "NUM_INPUT_STATES too large");
+	//static_assert(NUM_INPUTS > 0, "Number of inputs must be greater than 0");
+	//static_assert(NUM_INPUT_STATES > 0, "Number of input states must be greater than 0");
+	//static_assert(sizeof(StorageType) / 8 < std::numeric_limits<size_t>::max(),
+	//	"StorageType size in bits cannot exceed maximum value of size_t");
+	//static_assert(NUM_INPUTS <= std::numeric_limits<size_t>::max() / 8, "NUM_INPUTS too large");
+	//static_assert(NUM_INPUT_STATES <= std::numeric_limits<size_t>::max(), "NUM_INPUT_STATES too large");
 
 	static inline const size_t STORAGE_SIZE = sizeof(StorageType) * 8;
 

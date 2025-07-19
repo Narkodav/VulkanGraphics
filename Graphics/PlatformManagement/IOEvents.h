@@ -3,70 +3,70 @@
 
 enum class IOEvents
 {
-    KEY_PRESSED,
-    KEY_RELEASED,
-    KEY_REPEATED,
-    CHAR_INPUT,
-    MOUSE_BUTTON_PRESSED,
-    MOUSE_BUTTON_RELEASED,
-    MOUSE_MOVED,
-    MOUSE_SCROLLED,
-    MOUSE_ENTERED,
-    NUM
+    KeyPressed,
+    KeyReleased,
+    KeyRepeated,
+    CharInput,
+    MouseButtonPressed,
+    MouseButtonReleased,
+    MouseMoved,
+    MouseScrolled,
+    MouseEntered,
+    Num
 };
 
-struct IOEventPolicy : MT::EventPolicy<IOEvents, static_cast<size_t>(IOEvents::NUM)> {};
+struct IOEventPolicy : MT::EventPolicy<IOEvents, static_cast<size_t>(IOEvents::Num)> {};
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::KEY_PRESSED> {
+struct IOEventPolicy::Traits<IOEvents::KeyPressed> {
     using Signature = void(int key, int scancode, int mods);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::KEY_RELEASED> {
+struct IOEventPolicy::Traits<IOEvents::KeyReleased> {
     using Signature = void(int key, int scancode, int mods);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::KEY_REPEATED> {
+struct IOEventPolicy::Traits<IOEvents::KeyRepeated> {
     using Signature = void(int key, int scancode, int mods);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::CHAR_INPUT> {
+struct IOEventPolicy::Traits<IOEvents::CharInput> {
     using Signature = void(unsigned int codepoint);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::MOUSE_BUTTON_PRESSED> {
+struct IOEventPolicy::Traits<IOEvents::MouseButtonPressed> {
     using Signature = void(int button, int mods);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::MOUSE_BUTTON_RELEASED> {
+struct IOEventPolicy::Traits<IOEvents::MouseButtonReleased> {
     using Signature = void(int button, int mods);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::MOUSE_MOVED> {
+struct IOEventPolicy::Traits<IOEvents::MouseMoved> {
     using Signature = void(double x, double y);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::MOUSE_SCROLLED> {
+struct IOEventPolicy::Traits<IOEvents::MouseScrolled> {
     using Signature = void(double xoffset, double yoffset);
 };
 
 template<>
 template<>
-struct IOEventPolicy::Traits<IOEvents::MOUSE_ENTERED> {
+struct IOEventPolicy::Traits<IOEvents::MouseEntered> {
     using Signature = void(bool entered);
 };
