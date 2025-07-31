@@ -287,6 +287,7 @@ namespace Graphics
         enum class Bits : uint32_t {
             None = 0,
             UpdateAfterBind = vk::DescriptorPoolCreateFlagBits::eUpdateAfterBind,
+            FreeDescriptorSet = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet,
         };
 
         using VulkanFlags = vk::DescriptorPoolCreateFlags;
@@ -296,6 +297,40 @@ namespace Graphics
     template<>
     struct BitTraits<DescriptorPoolCreateFlags::Bits> {
         using ParentType = DescriptorPoolCreateFlags;
+    };
+
+    struct PipelineStage
+    {
+        enum class Bits : uint32_t {
+            None = 0,
+            TopOfPipe = vk::PipelineStageFlagBits::eTopOfPipe,
+            DrawIndirect = vk::PipelineStageFlagBits::eDrawIndirect,
+            VertexInput = vk::PipelineStageFlagBits::eVertexInput,
+            VertexShader = vk::PipelineStageFlagBits::eVertexShader,
+            TessellationControlShader = vk::PipelineStageFlagBits::eTessellationControlShader,
+            TessellationEvaluationShader = vk::PipelineStageFlagBits::eTessellationEvaluationShader,
+            GeometryShader = vk::PipelineStageFlagBits::eGeometryShader,
+            FragmentShader = vk::PipelineStageFlagBits::eFragmentShader,
+            EarlyFragmentTests = vk::PipelineStageFlagBits::eEarlyFragmentTests,
+            LateFragmentTests = vk::PipelineStageFlagBits::eLateFragmentTests,
+            ColorAttachmentOutput = vk::PipelineStageFlagBits::eColorAttachmentOutput,
+            ComputeShader = vk::PipelineStageFlagBits::eComputeShader,
+            Transfer = vk::PipelineStageFlagBits::eTransfer,
+            BottomOfPipe = vk::PipelineStageFlagBits::eBottomOfPipe,
+            Host = vk::PipelineStageFlagBits::eHost,
+            AllGraphics = vk::PipelineStageFlagBits::eAllGraphics,
+            AllCommands = vk::PipelineStageFlagBits::eAllCommands,
+            MeshShaderEXT = vk::PipelineStageFlagBits::eMeshShaderEXT,
+            TaskShaderEXT = vk::PipelineStageFlagBits::eTaskShaderEXT,
+        };
+
+        using VulkanFlags = vk::PipelineStageFlagBits;
+        using Flags = Flags<PipelineStage>;
+    };
+
+    template<>
+    struct BitTraits<PipelineStage::Bits> {
+        using ParentType = PipelineStage;
     };
 
 }

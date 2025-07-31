@@ -61,11 +61,11 @@ namespace Graphics {
         }
     };
 
-    struct Extent {
+    struct Extent2D {
         uint32_t width;
         uint32_t height;
 
-        Extent(uint32_t w = 800, uint32_t h = 600)
+        Extent2D(uint32_t w = 800, uint32_t h = 600)
             : width(w), height(h) {
         }
 
@@ -73,20 +73,20 @@ namespace Graphics {
         operator vk::Extent2D() const { return vk::Extent2D{ width, height }; }
 
         // Helper to get current window size from GLFW window
-        static Extent getWindowExtent(GLFWwindow* window) {
+        static Extent2D getWindowExtent(GLFWwindow* window) {
             int width, height;
             glfwGetWindowSize(window, &width, &height);
-            return Extent{
+            return Extent2D{
                 static_cast<uint32_t>(width),
                 static_cast<uint32_t>(height)
             };
         }
 
         // Helper to get current frame buffer size from GLFW window
-        static Extent getFrameBufferExtent(GLFWwindow* window) {
+        static Extent2D getFrameBufferExtent(GLFWwindow* window) {
             int width, height;
             glfwGetFramebufferSize(window, &width, &height);
-            return Extent{
+            return Extent2D{
                 static_cast<uint32_t>(width),
                 static_cast<uint32_t>(height)
             };
@@ -210,6 +210,38 @@ namespace Graphics {
         InputAttachment = vk::DescriptorType::eInputAttachment,
         UniformTexelBuffer = vk::DescriptorType::eUniformTexelBuffer,
         StorageTexelBuffer = vk::DescriptorType::eStorageTexelBuffer,
+    };
+
+    struct alignas(4) DrawCommand
+    {
+        uint32_t vertexCount;
+        uint32_t instanceCount;
+        uint32_t firstVertex;
+        uint32_t firstInstance;
+    };
+
+    struct Extent3D {
+        uint32_t width;
+        uint32_t height;
+        uint32_t depth;
+
+        Extent3D(uint32_t w = 800, uint32_t h = 600, uint32_t d = 1)
+            : width(w), height(h), depth(d) {
+        }
+
+        operator vk::Extent3D() const { return vk::Extent3D{ width, height, depth }; }
+    };
+
+    struct Offset3D {
+        int32_t x;
+        int32_t y;
+        int32_t z;
+
+        Offset3D(int32_t x = 0, int32_t y = 0, int32_t z = 0)
+            : x(x), y(y), z(z) {
+        }
+
+        operator vk::Offset3D() const { return vk::Offset3D{ x, y, z }; }
     };
 
 } // namespace Graphics

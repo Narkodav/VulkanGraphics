@@ -206,10 +206,67 @@ namespace Graphics {
                     vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
             vkStorageSpecific.runtimeDescriptorArray = std::any_cast<bool>(required);
         },
+
+        // Mesh shading
+
+        //MeshShaderEXT,
+            [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceMeshShaderFeaturesEXT*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceMeshShaderFeaturesEXT));
+            vkStorageSpecific.meshShader = std::any_cast<bool>(required);
+        },
+
+        //TaskShaderEXT,
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceMeshShaderFeaturesEXT*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceMeshShaderFeaturesEXT));
+            vkStorageSpecific.taskShader = std::any_cast<bool>(required);
+        },
+
+        //MeshShaderNV,
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceMeshShaderFeaturesNV*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceMeshShaderFeaturesNV));
+            vkStorageSpecific.meshShader = std::any_cast<bool>(required);
+        },
+
+        //TaskShaderNV,
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceMeshShaderFeaturesNV*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceMeshShaderFeaturesNV));
+            vkStorageSpecific.taskShader = std::any_cast<bool>(required);
+        },
+
+        //ShaderDrawParameters,
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceShaderDrawParametersFeatures*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceShaderDrawParametersFeatures));
+            vkStorageSpecific.shaderDrawParameters = std::any_cast<bool>(required);
+        },
     };
 
     const std::array<PhysicalDeviceCache::TaskTableSignature,
         static_cast<size_t>(DeviceFeature::FeaturesNum)> PhysicalDeviceCache::featureChecks = {
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
             [](const std::any& required, const std::any& available)
         { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
             [](const std::any& required, const std::any& available)

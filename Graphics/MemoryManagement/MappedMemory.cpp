@@ -9,7 +9,6 @@ namespace Graphics {
     {
         m_memoryProperties |= MemoryProperty::Bits::HostVisibleCoherent;
         m_capacity = capacity;
-        m_alignment = memRequirements.alignment;
         m_memoryTypeIndex = device.findMemoryType(instance, memRequirements.memoryTypeBits, memoryProperties);
         m_memory = device.allocateMemory(instance, m_capacity, m_memoryTypeIndex);
         m_data = device.getDevice().mapMemory(

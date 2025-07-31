@@ -44,6 +44,8 @@ namespace Graphics {
         vk::PhysicalDeviceTextureCompressionASTCHDRFeatures astcHdrFeatures;
         //vk::PhysicalDeviceVertexInputDynamicStateFeatures vertexInputDynamicFeatures;
         vk::PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures zeroInitializeFeatures;
+        vk::PhysicalDeviceMeshShaderFeaturesEXT meshShaderFeatures;
+        vk::PhysicalDeviceMeshShaderFeaturesNV meshShaderFeaturesNV;
 
         // Chain all features
         features2.pNext = &bit16StorageFeatures;
@@ -80,7 +82,9 @@ namespace Graphics {
         sync2Features.pNext = &astcHdrFeatures;
         astcHdrFeatures.pNext = &zeroInitializeFeatures;
         //vertexInputDynamicFeatures.pNext = &zeroInitializeFeatures;
-        zeroInitializeFeatures.pNext = nullptr;  // End of chain
+        zeroInitializeFeatures.pNext = &meshShaderFeatures;  
+        meshShaderFeatures.pNext = &meshShaderFeaturesNV;
+        meshShaderFeaturesNV.pNext = nullptr; // End of chain
 
         // Query all features
         m_physicalDevice.getFeatures2(&features2, instance.getDispatchLoader());
@@ -164,6 +168,23 @@ namespace Graphics {
                 static_cast<bool>(descriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing));
             storeFeature(DeviceFeature::RuntimeDescriptorArray,
                 static_cast<bool>(descriptorIndexingFeatures.runtimeDescriptorArray));
+        }
+
+        //Mesh shader features
+        {
+            storeFeature(DeviceFeature::MeshShaderEXT,
+                static_cast<bool>(meshShaderFeatures.meshShader));
+            storeFeature(DeviceFeature::TaskShaderEXT,
+                static_cast<bool>(meshShaderFeatures.taskShader));
+            storeFeature(DeviceFeature::MeshShaderNV,
+                static_cast<bool>(meshShaderFeaturesNV.meshShader));
+            storeFeature(DeviceFeature::TaskShaderNV,
+                static_cast<bool>(meshShaderFeaturesNV.taskShader));
+        }
+
+        {
+            storeFeature(DeviceFeature::ShaderDrawParameters,
+                static_cast<bool>(shaderDrawFeatures.shaderDrawParameters));
         }
     }
 

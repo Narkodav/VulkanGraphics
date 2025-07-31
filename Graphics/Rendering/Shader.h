@@ -15,6 +15,10 @@ namespace Graphics {
             TessellationControl,
             TessellationEvaluation,
             Compute,
+            TaskNV,
+            MeshNV,
+            Task,
+            Mesh,
             Unknown
         };
 

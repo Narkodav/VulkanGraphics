@@ -10,6 +10,7 @@ namespace Graphics {
             throw std::runtime_error("Failed to create window surface");
         }
         m_surface = surfaceTmp;
+        m_initialized = true;
     }
 
 }

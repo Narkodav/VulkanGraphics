@@ -26,7 +26,7 @@ namespace Graphics {
     }
 
     vk::Extent2D SwapChainFormat::chooseExtent(
-        const SwapChainSupportDetails& supportDetails, Extent extent)
+        const SwapChainSupportDetails& supportDetails, Extent2D extent)
     {
         if (supportDetails.capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
             return supportDetails.capabilities.currentExtent;

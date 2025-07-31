@@ -19,7 +19,7 @@ namespace Graphics {
         RenderRegion& operator=(RenderRegion&& other) noexcept = default;
 
         // Create a full-window render region
-        static RenderRegion createFullWindow(const Extent& extent) {
+        static RenderRegion createFullWindow(const Extent2D& extent) {
             RenderRegion region{};
             region.viewport = vk::Viewport(
                 0.0f,                               // x
@@ -51,7 +51,7 @@ namespace Graphics {
             return region;
         }
 
-        bool isWithinBounds(const Extent& extent) const {
+        bool isWithinBounds(const Extent2D& extent) const {
             return (viewport.x >= 0.0f &&
                 viewport.y >= 0.0f &&
                 viewport.x + viewport.width <= static_cast<float>(extent.width) &&

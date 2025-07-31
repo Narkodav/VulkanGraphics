@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Graphics\Rendering\ComputePipeline.cpp" />
     <ClCompile Include="Graphics\Rendering\DescriptorSetLayout.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\DeviceCaching\PhysicalDeviceCache.cpp" />
@@ -194,10 +195,13 @@
     <ClCompile Include="Graphics\PlatformManagement\WindowEvents.cpp" />
     <ClCompile Include="Graphics\MemoryManagement\Image.cpp" />
     <ClCompile Include="Graphics\Rendering\Surface.cpp" />
+    <ClCompile Include="Graphics\Rendering\MeshPipeline.cpp" />
+    <ClCompile Include="Graphics\MemoryManagement\PixelData.cpp" />
     <ClCompile Include="Vendor\stb_image\stb_image.cpp" />
     <ClCompile Include="Vendor\stb_image\stb_image_write.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Graphics\Rendering\ComputePipeline.h" />
     <ClInclude Include="Graphics\Rendering\DescriptorSetLayout.h" />
     <ClInclude Include="Graphics\BufferDataLayouts.h" />
     <ClInclude Include="Graphics\Camera.h" />
@@ -239,15 +243,10 @@
     <ClInclude Include="Graphics\PlatformManagement\WindowEvents.h" />
     <ClInclude Include="Graphics\MemoryManagement\Image.h" />
     <ClInclude Include="Graphics\Rendering\Surface.h" />
+    <ClInclude Include="Graphics\Rendering\MeshPipeline.h" />
+    <ClInclude Include="Graphics\MemoryManagement\PixelData.h" />
     <ClInclude Include="Vendor\stb_image\stb_image.h" />
     <ClInclude Include="Vendor\stb_image\stb_image_write.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="**/*.vert;**/*.frag">
-      <Command>"E:/Program Files (x86)/API/Vulkan/Bin/glslc.exe" "%(FullPath)" -o "%(RootDir)%(Directory)%(Filename)%(Extension).spv"</Command>
-      <Outputs>%(RootDir)%(Directory)%(Filename)%(Extension).spv</Outputs>
-      <Message>Compiling shader %(Filename)%(Extension)</Message>
-    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

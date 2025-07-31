@@ -65,11 +65,18 @@ public:
             return Attributes();
         }
 
-        static Attributes firstPersonGameAtr() {
+        static Attributes firstPersonGameMaximisedAtr() {
             Attributes atr;
             atr.centerCursor = true;
             atr.cursorMode = CursorMode::Disabled;
             atr.maximized = true;
+            return atr;
+        }
+
+        static Attributes firstPersonGameMinimisedAtr() {
+            Attributes atr;
+            atr.centerCursor = true;
+            atr.cursorMode = CursorMode::Disabled;
             return atr;
         }
     };
@@ -79,8 +86,8 @@ public:
 
 private:
     GLFWwindow* m_window = nullptr;
-    Graphics::Extent m_windowExtent; //extent in window coordinates
-    Graphics::Extent m_frameBufferExtent; //extent in pixels, represents actual physical window size, use this for rendering
+    Graphics::Extent2D m_windowExtent; //extent in window coordinates
+    Graphics::Extent2D m_frameBufferExtent; //extent in pixels, represents actual physical window size, use this for rendering
     std::string m_windowText;
 
     Attributes m_attributes;
@@ -94,16 +101,16 @@ public:
         m_initialized(false) {
     };
 
-    Window(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr);
+    Window(const Graphics::Extent2D& windowExtent, const std::string& windowText, const Attributes& attr);
 
-    void init(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr);
+    void init(const Graphics::Extent2D& windowExtent, const std::string& windowText, const Attributes& attr);
 
     Graphics::Surface createSurface(const Graphics::Context& context) const;
 
     Window(Window&& other) noexcept {
         m_window = std::exchange(other.m_window, nullptr);
-        m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent{ 0, 0 });
-        m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent{ 0, 0 });
+        m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent2D{ 0, 0 });
+        m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent2D{ 0, 0 });
         m_windowText = std::exchange(other.m_windowText, "");
 
         m_attributes = std::exchange(other.m_attributes, Attributes());
@@ -121,8 +128,8 @@ public:
             assert(!m_initialized && "Cannot move to an initialised window");
 
             m_window = std::exchange(other.m_window, nullptr);
-            m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent{ 0, 0 });
-            m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent{ 0, 0 });
+            m_windowExtent = std::exchange(other.m_windowExtent, Graphics::Extent2D{ 0, 0 });
+            m_frameBufferExtent = std::exchange(other.m_frameBufferExtent, Graphics::Extent2D{ 0, 0 });
             m_windowText = std::exchange(other.m_windowText, "");
 
             m_attributes = std::exchange(other.m_attributes, Attributes());
@@ -141,8 +148,8 @@ public:
 
     ~Window() { assert(!m_initialized && "Window was not destroyed!"); };
 
-    const Graphics::Extent& getWindowExtent() const { return m_windowExtent; };
-    const Graphics::Extent& getFrameBufferExtent() const { return m_frameBufferExtent; };
+    const Graphics::Extent2D& getWindowExtent() const { return m_windowExtent; };
+    const Graphics::Extent2D& getFrameBufferExtent() const { return m_frameBufferExtent; };
     float getAspectRatio() const { return m_windowExtent.width / (float)m_windowExtent.height; };
     const std::string& getWindowText() const { return m_windowText; };
     GLFWwindow* getWindowHandle() const { return m_window; };

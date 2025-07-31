@@ -72,20 +72,6 @@ namespace Graphics {
 		}
 	}
 
-	void CommandBuffer::bindPipeline(const Context& instance, const Pipeline& pipeline)
-	{
-		try {
-			m_commandBuffer.bindPipeline(
-				vk::PipelineBindPoint::eGraphics, pipeline.getPipeline(), instance.getDispatchLoader());
-		}
-		catch (const vk::SystemError& e) {
-			throw std::runtime_error("failed to bind graphics pipeline: " + std::string(e.what()));
-		}
-		catch (const std::exception& e) {
-			throw std::runtime_error("Unexpected error when binding graphics pipeline: " + std::string(e.what()));
-		}
-	}
-
 	void CommandBuffer::bindIndexBuffer(const Context& instance,
 		const Buffer& buffer, vk::DeviceSize offset)
 	{
@@ -100,20 +86,8 @@ namespace Graphics {
 		}
 	}
 
-	void CommandBuffer::bindDescriptorSets(const Context& instance,
-		const Pipeline& pipeline, const std::vector<DescriptorSetHandle>& descriptorSets,
-		const std::vector<uint32_t>& dynamicOffsets /*= {}*/)
-	{
-		auto descriptorSetsRaw = convert<vk::DescriptorSet>
-			(descriptorSets, [](const DescriptorSetHandle& set)
-				{ return set->getSet(); });
-
-		m_commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
-			pipeline.getLayout(), 0, descriptorSetsRaw, dynamicOffsets, instance.getDispatchLoader());
-	}
-
 	void CommandBuffer::setPipelineBarrier(const Context& instance,
-		vk::PipelineStageFlags srcStage, vk::PipelineStageFlags dstStage,
+		Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
 		Image& image, vk::ImageLayout newLayout,
 		vk::AccessFlags srcAccess, vk::AccessFlags dstAccess)
 	{
@@ -132,11 +106,60 @@ namespace Graphics {
 		barrier.dstAccessMask = dstAccess;
 
 		m_commandBuffer.pipelineBarrier(
-			srcStage,
-			dstStage,
+			static_cast<vk::PipelineStageFlagBits>(srcStage),
+			static_cast<vk::PipelineStageFlagBits>(dstStage),
 			{}, 0, nullptr, 0, nullptr, 1, &barrier);
 
 		image.setLayout(newLayout);
+	}
+
+	void CommandBuffer::transferImageData(const Context& instance, const Buffer& srcBuffer,
+		Image& dstImage, Extent3D imageExtent, size_t offset /*= 0*/,
+		Offset3D imageOffset /*= Offset3D()*/)
+	{
+		vk::BufferImageCopy region{};
+		region.bufferOffset = offset;
+		region.bufferRowLength = 0;
+		region.bufferImageHeight = 0;
+		region.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
+		region.imageSubresource.mipLevel = 0;
+		region.imageSubresource.baseArrayLayer = 0;
+		region.imageSubresource.layerCount = 1;
+		region.imageOffset = imageOffset;
+		region.imageExtent = imageExtent;
+
+		try {
+			m_commandBuffer.copyBufferToImage(srcBuffer.getBuffer(), dstImage.getImage(),
+				dstImage.getLayout(), 1, &region, instance.getDispatchLoader());
+		}
+		catch (const vk::SystemError& e) {
+			throw std::runtime_error("failed to transfer buffer data: " + std::string(e.what()));
+		}
+		catch (const std::exception& e) {
+			throw std::runtime_error("Unexpected error when transferring buffer data: " + std::string(e.what()));
+		}
+	}
+
+	void CommandBuffer::setPipelineBarrier(const Context& instance,
+		Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
+		Buffer& buffer, vk::AccessFlags srcAccess /*= vk::AccessFlagBits::eShaderWrite*/,
+		vk::AccessFlags dstAccess /*= vk::AccessFlagBits::eIndirectCommandRead*/)
+	{
+		vk::BufferMemoryBarrier barrier{};
+		barrier.sType = vk::StructureType::eBufferMemoryBarrier;
+		barrier.srcAccessMask = srcAccess;
+		barrier.dstAccessMask = dstAccess;
+		barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		barrier.buffer = buffer.getBuffer();
+		barrier.offset = 0;
+		barrier.size = VK_WHOLE_SIZE;
+
+		m_commandBuffer.pipelineBarrier(
+			static_cast<vk::PipelineStageFlagBits>(srcStage),
+			static_cast<vk::PipelineStageFlagBits>(dstStage),
+			{}, 0, nullptr, 1, &barrier, 0, nullptr,
+			instance.getDispatchLoader());
 	}
 
 	void CommandBuffer::transferBufferData(const Context& instance, const Buffer& srcBuffer,
@@ -153,34 +176,7 @@ namespace Graphics {
 			throw std::runtime_error("Unexpected error when transferring buffer data: " + std::string(e.what()));
 		}
 	}
-
-	void CommandBuffer::transferImageData(const Context& instance, const Buffer& srcBuffer,
-		Image& dstImage, size_t offset /*= 0*/, vk::Offset3D imageOffset /*= { 0, 0, 0 }*/)
-	{
-		vk::BufferImageCopy region{};
-		region.bufferOffset = offset;
-		region.bufferRowLength = 0;
-		region.bufferImageHeight = 0;
-		region.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
-		region.imageSubresource.mipLevel = 0;
-		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = 1;
-		region.imageOffset = imageOffset;
-		region.imageExtent = vk::Extent3D{ static_cast<uint32_t>(dstImage.getWidth()),
-		static_cast<uint32_t>(dstImage.getHeight()), 1 };
-
-		try {
-			m_commandBuffer.copyBufferToImage(srcBuffer.getBuffer(), dstImage.getImage(),
-				dstImage.getLayout(), 1, &region, instance.getDispatchLoader());
-		}
-		catch (const vk::SystemError& e) {
-			throw std::runtime_error("failed to transfer buffer data: " + std::string(e.what()));
-		}
-		catch (const std::exception& e) {
-			throw std::runtime_error("Unexpected error when transferring buffer data: " + std::string(e.what()));
-		}
-	}
-
+		
 	void CommandBuffer::setRenderView(const Context& instance, const RenderRegion& canvas)
 	{
 
@@ -216,6 +212,35 @@ namespace Graphics {
 		try {
 			m_commandBuffer.drawIndexed(
 				indexCount, instanceCount, firstIndex, indexIncrement, firstInstance, instance.getDispatchLoader());
+		}
+		catch (const vk::SystemError& e) {
+			throw std::runtime_error("failed to record draw indexed command: " + std::string(e.what()));
+		}
+		catch (const std::exception& e) {
+			throw std::runtime_error("Unexpected error recording draw indexed command: " + std::string(e.what()));
+		}
+	}
+
+	void CommandBuffer::drawIndirect(const Context& instance, const Buffer& buffer,
+		vk::DeviceSize offset, uint32_t drawCount, uint32_t stride)
+	{
+		try {
+			m_commandBuffer.drawIndirect(buffer.getBuffer(), offset, drawCount,
+				stride, instance.getDispatchLoader());
+		}
+		catch (const vk::SystemError& e) {
+			throw std::runtime_error("failed to record draw indirect command: " + std::string(e.what()));
+		}
+		catch (const std::exception& e) {
+			throw std::runtime_error("Unexpected error recording draw indirect command: " + std::string(e.what()));
+		}
+	}
+
+	void CommandBuffer::dispatch(const Context& instance, uint32_t groupCountX,
+		uint32_t groupCountY, uint32_t groupCountZ)
+	{
+		try {
+			m_commandBuffer.dispatch(groupCountX, groupCountY, groupCountZ, instance.getDispatchLoader());
 		}
 		catch (const vk::SystemError& e) {
 			throw std::runtime_error("failed to record draw indexed command: " + std::string(e.what()));

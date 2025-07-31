@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanGraphics", "VulkanGraphics.vcxproj", "{BFB7D5F9-F9E2-41F5-8ECB-BFFAF50712BF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VoxelEngineVulkan", "..\VoxelEngineVulkan\VoxelEngineVulkan.vcxproj", "{877F8C21-33C6-4E4D-B45D-36284CD2D094}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VoxelEngine", "..\VoxelEngine\VoxelEngine.vcxproj", "{877F8C21-33C6-4E4D-B45D-36284CD2D094}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BFB7D5F9-F9E2-41F5-8ECB-BFFAF50712BF} = {BFB7D5F9-F9E2-41F5-8ECB-BFFAF50712BF}
 	EndProjectSection

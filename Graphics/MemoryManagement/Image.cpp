@@ -2,29 +2,14 @@
 
 namespace Graphics {
 
-    Image::Image(const Context& instance, const Device& device, const std::string& filepath)
+    Image::Image(const Context& instance, const Device& device,
+        size_t width, size_t height)
     {
-        load(instance, device, filepath);
-    }
-
-    void Image::load(const Context& instance, const Device& device, const std::string& filepath)
-    {
-        int texWidth, texHeight, texChannels;
-        m_pixels = stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-        m_width = static_cast<size_t>(texWidth);
-        m_height = static_cast<size_t>(texHeight);
-        m_bpp = static_cast<size_t>(texChannels);
-        m_capacity = m_width * m_height * STBI_rgb_alpha;
-
-        if (!m_pixels) {
-            throw std::runtime_error("failed to load texture image!");
-        }
-
         vk::ImageCreateInfo imageInfo{};
         imageInfo.sType = vk::StructureType::eImageCreateInfo;
         imageInfo.imageType = vk::ImageType::e2D;
-        imageInfo.extent.width = m_width;
-        imageInfo.extent.height = m_height;
+        imageInfo.extent.width = width;
+        imageInfo.extent.height = height;
         imageInfo.extent.depth = 1;
         imageInfo.mipLevels = 1;
         imageInfo.arrayLayers = 1;
@@ -49,6 +34,8 @@ namespace Graphics {
 
         m_initialized = true;
     }
+
+
 
     void Image::createView(const Context& instance, const Device& device)
     {

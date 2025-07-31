@@ -46,6 +46,14 @@ namespace Graphics {
         ShaderSampledImageArrayNonUniformIndexing,
         RuntimeDescriptorArray,                   // Allow variable-sized descriptor arrays
 
+        // Mesh shading
+        MeshShaderEXT,
+        TaskShaderEXT,
+        MeshShaderNV, // old Nvidia specific
+        TaskShaderNV, // old Nvidia specific
+
+        ShaderDrawParameters,
+
         FeaturesNum
     };
 
@@ -93,4 +101,11 @@ namespace Graphics {
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::ShaderSampledImageArrayNonUniformIndexing> { using Type = bool; };
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::RuntimeDescriptorArray> { using Type = bool; };
 
+    // Mesh shading
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::MeshShaderEXT> { using Type = bool; };
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::TaskShaderEXT> { using Type = bool; };
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::MeshShaderNV> { using Type = bool; };
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::TaskShaderNV> { using Type = bool; };
+
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::ShaderDrawParameters> { using Type = bool; };
 }

@@ -1,13 +1,18 @@
 #include "Window.h"
 
-Window::Window(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr)
+Window::Window(const Graphics::Extent2D& windowExtent, const std::string& windowText, const Attributes& attr)
 {
     init(windowExtent, windowText, attr);
 }
 
-void Window::init(const Graphics::Extent& windowExtent, const std::string& windowText, const Attributes& attr)
+void Window::init(const Graphics::Extent2D& windowExtent, const std::string& windowText, const Attributes& attr)
 {
     PlatformContext::instance();
+
+    // Store the window extent and text
+    m_windowExtent = windowExtent;
+    m_windowText = windowText;
+    m_attributes = attr;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -32,6 +37,9 @@ void Window::init(const Graphics::Extent& windowExtent, const std::string& windo
     if (!m_window) {
         throw std::runtime_error("Failed to create GLFW window");
     }
+    
+    // Set the user pointer to this instance so callbacks can access it
+    glfwSetWindowUserPointer(m_window, this);
 
     // Window events
     glfwSetWindowSizeCallback(m_window, Window::static_windowResizeCallback);
@@ -54,7 +62,8 @@ void Window::init(const Graphics::Extent& windowExtent, const std::string& windo
 
     glfwSetInputMode(m_window, GLFW_CURSOR, static_cast<int>(attr.cursorMode));   
 
-    m_frameBufferExtent = Graphics::Extent::getFrameBufferExtent(m_window);
+    m_frameBufferExtent = Graphics::Extent2D::getFrameBufferExtent(m_window);
+    m_windowExtent = Graphics::Extent2D::getWindowExtent(m_window);
     m_initialized = true;
 }
 

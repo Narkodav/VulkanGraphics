@@ -88,6 +88,8 @@ namespace Graphics {
 			vk::PhysicalDeviceTextureCompressionASTCHDRFeatures astcHdrFeatures;
 			//vk::PhysicalDeviceVertexInputDynamicStateFeatures vertexInputDynamicFeatures;
 			vk::PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures zeroInitializeFeatures;
+			vk::PhysicalDeviceMeshShaderFeaturesEXT meshShaderFeaturesEXT;
+			vk::PhysicalDeviceMeshShaderFeaturesNV meshShaderFeaturesNV;
 
 			// Chain all features
 			features2.pNext = &bit16StorageFeatures;
@@ -124,7 +126,9 @@ namespace Graphics {
 			sync2Features.pNext = &astcHdrFeatures;
 			astcHdrFeatures.pNext = &zeroInitializeFeatures;
 			//vertexInputDynamicFeatures.pNext = &zeroInitializeFeatures;
-			zeroInitializeFeatures.pNext = nullptr;  // End of chain
+			zeroInitializeFeatures.pNext = &meshShaderFeaturesEXT;
+			meshShaderFeaturesEXT.pNext = &meshShaderFeaturesNV;
+			meshShaderFeaturesNV.pNext = nullptr; // End of chain
 
 			for (const auto& feature : requirements.features)
 				featureSetTaskTable[static_cast<size_t>(feature.first)](features2, feature.second);

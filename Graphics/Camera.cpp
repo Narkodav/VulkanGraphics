@@ -61,10 +61,10 @@ namespace Graphics {
 		if (m_pitch < -89.f)
 			m_pitch = -89.f;
 
-		//if (m_yaw > 360)
-		//	m_yaw -= (m_yaw / 360) * 360;
-		//else if (m_yaw < 0)
-		//	m_yaw -= (m_yaw / 360 - 1) * 360;
+		if (m_yaw > 360.f)
+			m_yaw -= 360.f;
+		else if (m_yaw < 0)
+			m_yaw += 360;
 
 		m_camFront.x = glm::cos(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch));
 		m_camFront.y = glm::sin(glm::radians(m_pitch));

@@ -138,6 +138,15 @@
     <ClCompile Include="Graphics\Rendering\Surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\Rendering\MeshPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Rendering\ComputePipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\MemoryManagement\PixelData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Common.h">
@@ -269,10 +278,20 @@
     <ClInclude Include="Graphics\Rendering\Surface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Rendering\MeshPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Rendering\ComputePipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\MemoryManagement\PixelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="**/*.vert;**/*.frag" />
-    <CustomBuild Include="**/*.vert;**/*.frag" />
+    <CustomBuild Include="Vendor\imgui\backends\vulkan\glsl_shader.vert" />
+    <CustomBuild Include="Shaders\basic.frag" />
+    <CustomBuild Include="Vendor\imgui\backends\vulkan\glsl_shader.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />

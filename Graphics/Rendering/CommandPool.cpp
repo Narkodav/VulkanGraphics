@@ -43,4 +43,38 @@ namespace Graphics {
             throw;
         }
     }
+
+    void CommandPool::makeOneTimeImageDataTransfer(const Context& instance, const Device& device,
+        const Queue& queue, MappedMemory& stagingMemory, const Buffer& stagingBuffer,
+        Image& image, const PixelData& data, uint32_t dstOffset /*= 0*/,
+        Offset3D dstImageOffset /*= Offset3D()*/)
+    {
+        makeOneTimeSubmit(instance, device, queue,
+            [this, &instance, &stagingMemory, &stagingBuffer, &image,
+            &data, &dstOffset, &dstImageOffset]
+            (CommandBufferHandle temporary) {
+                temporary->setPipelineBarrier(instance,
+                    vk::PipelineStageFlagBits::eTopOfPipe,
+                    vk::PipelineStageFlagBits::eTransfer,
+                    image,
+                    vk::ImageLayout::eTransferDstOptimal,
+                    vk::AccessFlagBits::eNone,
+                    vk::AccessFlagBits::eTransferWrite
+                    );
+                auto pixelData = data.getPixelData();
+                auto mappedMemory = stagingMemory.getMapping<uint8_t>(pixelData.size());
+                std::copy(pixelData.begin(), pixelData.end(), mappedMemory.begin());
+                temporary->transferImageData(instance, stagingBuffer, image,
+                    data.getExtent3D(), dstOffset, dstImageOffset);
+
+                temporary->setPipelineBarrier(instance,
+                    vk::PipelineStageFlagBits::eTransfer,
+                    vk::PipelineStageFlagBits::eFragmentShader,
+                    image,
+                    vk::ImageLayout::eShaderReadOnlyOptimal,
+                    vk::AccessFlagBits::eTransferWrite,
+                    vk::AccessFlagBits::eShaderRead
+                );
+            });
+    }
 }

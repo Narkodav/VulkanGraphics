@@ -112,6 +112,8 @@ namespace Graphics {
 		const glm::vec3& getCamUp() const { return m_camUp; };
 		const glm::vec3& getCamForward() const { return m_camForward; };
 		const glm::vec3& getWorldUp() const { return m_worldUpVector; };
+		const float getYaw() const { return m_yaw; };
+		const float getPitch() const { return m_pitch; };
 	};
 
 	template<ProjectionType projection>

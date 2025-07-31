@@ -5,7 +5,9 @@
 #include "RenderPass.h"
 #include "SwapChain.h"
 #include "Pipeline.h"
+#include "ComputePipeline.h"
 #include "RenderRegion.h"
+#include "Flags.h"
 #include "../MemoryManagement/Buffer.h"
 #include "../MemoryManagement/Image.h"
 #include "../MemoryManagement/DescriptorSet.h"
@@ -61,8 +63,19 @@ namespace Graphics {
         void beginRenderPass(const Context& instance, const RenderPass& renderPass,
             const SwapChain& swapChain, uint32_t imageIndex, Color clearColor, float clearDepth);
 
-        void bindPipeline(const Context& instance, const Pipeline& pipeline);
-
+        template<typename PipelineType>
+        void bindPipeline(const Context& instance, const PipelineType& pipeline)
+        {
+            try {
+                m_commandBuffer.bindPipeline(pipeline.getBindPoint(), pipeline.getPipeline(), instance.getDispatchLoader());
+            }
+            catch (const vk::SystemError& e) {
+                throw std::runtime_error("failed to bind graphics pipeline: " + std::string(e.what()));
+            }
+            catch (const std::exception& e) {
+                throw std::runtime_error("Unexpected error when binding graphics pipeline: " + std::string(e.what()));
+            }
+        }
         template<size_t bufferAmount>
         void bindVertexBuffers(const Context& instance,
             std::array<std::reference_wrapper<const Buffer>, bufferAmount> buffers,
@@ -80,20 +93,36 @@ namespace Graphics {
         void bindIndexBuffer(const Context& instance,
             const Buffer& buffer, vk::DeviceSize offset);
 
+        template<typename PipelineType>
         void bindDescriptorSets(const Context& instance,
-            const Pipeline& pipeline, const std::vector<DescriptorSetHandle>& descriptorSets,
-            const std::vector<uint32_t>& dynamicOffsets = {});
+            const PipelineType& pipeline, const std::vector<DescriptorSetHandle>& descriptorSets,
+            const std::vector<uint32_t>& dynamicOffsets = {})
+        {
+            auto descriptorSetsRaw = convert<vk::DescriptorSet>
+                (descriptorSets, [](const DescriptorSetHandle& set)
+                    { return set->getSet(); });
+
+            m_commandBuffer.bindDescriptorSets(pipeline.getBindPoint(),
+                pipeline.getLayout(), 0, descriptorSetsRaw, dynamicOffsets,
+                instance.getDispatchLoader());
+        }
 
         void setPipelineBarrier(const Context& instance,
-            vk::PipelineStageFlags srcStage, vk::PipelineStageFlags dstStage,
+            Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
             Image& image, vk::ImageLayout newLayout,
             vk::AccessFlags srcAccess, vk::AccessFlags dstAccess);
+
+        void setPipelineBarrier(const Context& instance,
+            Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
+            Buffer& buffer, vk::AccessFlags srcAccess = vk::AccessFlagBits::eShaderWrite,
+            vk::AccessFlags dstAccess = vk::AccessFlagBits::eIndirectCommandRead);
 
         void transferBufferData(const Context& instance, const Buffer& srcBuffer,
             const Buffer& dstBuffer, const CopyRegion& copyRegion);
 
         void transferImageData(const Context& instance, const Buffer& srcBuffer,
-            Image& dstImage, size_t offset = 0, vk::Offset3D imageOffset = { 0, 0, 0 });
+            Image& dstImage, Extent3D imageExtent, size_t offset = 0,
+            Offset3D imageOffset = Offset3D());
 
         void setRenderView(const Context& instance, const RenderRegion& canvas);
         void draw(const Context& instance,
@@ -104,6 +133,11 @@ namespace Graphics {
         void endRenderPass(const Context& instance);
         void stopRecord(const Context& instance);
         void reset(const Context& instance);
+
+        void dispatch(const Context& instance, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+
+        void drawIndirect(const Context& instance, const Buffer& buffer,
+            vk::DeviceSize offset, uint32_t drawCount, uint32_t stride);
 
         bool isValid() const {
             return m_isValid;

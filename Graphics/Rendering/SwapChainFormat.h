@@ -57,13 +57,13 @@ namespace Graphics {
 
         static vk::SurfaceFormatKHR chooseSurfaceFormat(const SwapChainSupportDetails& supportDetails);
         static vk::PresentModeKHR choosePresentMode(const SwapChainSupportDetails& supportDetails);
-        static vk::Extent2D chooseExtent(const SwapChainSupportDetails& supportDetails, Extent extent);
+        static vk::Extent2D chooseExtent(const SwapChainSupportDetails& supportDetails, Extent2D extent);
 
         static SwapChainFormat create(
             const Context& instance,
             const Device& device,
             const Surface& surface,
-            const Extent& extent
+            const Extent2D& extent
         ) {
             SwapChainSupportDetails supports = device.getPhysicalDevice()
                 .getSwapChainSupportDetails(instance, surface);

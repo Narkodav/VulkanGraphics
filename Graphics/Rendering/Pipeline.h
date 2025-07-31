@@ -10,10 +10,25 @@
 #include "DescriptorSetLayout.h"
 
 namespace Graphics {
-
     class Pipeline
     {
     public:
+        enum class CullMode
+        {
+            None = vk::CullModeFlagBits::eNone,
+            Front = vk::CullModeFlagBits::eFront,
+            Back = vk::CullModeFlagBits::eBack,
+            FrontAndBack = vk::CullModeFlagBits::eFrontAndBack,
+            Num
+        };
+
+        enum class FrontFace
+        {
+            CounterClockwise = vk::FrontFace::eCounterClockwise,
+            Clockwise = vk::FrontFace::eClockwise,
+            Num
+        };
+
         class ShaderBundle
         {
         private:
@@ -51,7 +66,6 @@ namespace Graphics {
         };
 
     private:
-
         ShaderBundle m_shaders;
 
         vk::Pipeline m_pipeline = nullptr;
@@ -111,7 +125,8 @@ namespace Graphics {
         Pipeline(const Context& instance, const Device& device, const RenderPass& renderPass,
             ShaderBundle shaders, const RenderRegion& canvas, const SwapChainFormat& format,
             const VertexDefinitions<VertexDefs...>& vertices,
-            const std::vector<const DescriptorSetLayout*>& layouts)
+            const std::vector<const DescriptorSetLayout*>& layouts,
+            CullMode cullMode = CullMode::Back, FrontFace frontFace = FrontFace::CounterClockwise)
         {
             m_shaders = shaders;
             auto shaderState = createShaderStages();
@@ -154,8 +169,8 @@ namespace Graphics {
             rasterizer.rasterizerDiscardEnable = VK_FALSE;
             rasterizer.polygonMode = vk::PolygonMode::eFill;
             rasterizer.lineWidth = 1.0f;
-            rasterizer.cullMode = vk::CullModeFlagBits::eBack;
-            rasterizer.frontFace = vk::FrontFace::eCounterClockwise;
+            rasterizer.cullMode = static_cast<vk::CullModeFlagBits>(cullMode);
+            rasterizer.frontFace = static_cast<vk::FrontFace>(frontFace);
             rasterizer.depthBiasEnable = VK_FALSE;
             rasterizer.depthBiasConstantFactor = 0.0f; // Optional
             rasterizer.depthBiasClamp = 0.0f; // Optional
@@ -195,9 +210,9 @@ namespace Graphics {
             colorBlending.blendConstants[3] = 0.0f; // Optional
 
             auto layoutsRaw = convert<vk::DescriptorSetLayout>
-                (layouts, [this](const DescriptorSetLayout* layout)
-                    {
-                        return layout->getLayout();
+                (layouts, [](const DescriptorSetLayout* layout) {
+                if (layout == nullptr) return vk::DescriptorSetLayout{};
+                return layout->getLayout();
                     });
 
             vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
@@ -304,6 +319,8 @@ namespace Graphics {
 
         const vk::Pipeline& getPipeline() const { return m_pipeline; };
         const vk::PipelineLayout& getLayout() const { return m_pipelineLayout; };
+
+        static inline const auto& getBindPoint() { return vk::PipelineBindPoint::eGraphics; };
     };
 
 }

@@ -5,6 +5,7 @@
 #include "../PlatformManagement/Window.h"
 #include "CommandBuffer.h"
 #include "../MemoryManagement/MappedMemory.h"
+#include "../MemoryManagement/PixelData.h"
 
 namespace Graphics {
 
@@ -123,6 +124,11 @@ namespace Graphics {
                         dstBuffer, CopyRegion(0, dstOffset, data.size() * sizeof(Type)));
                 });
         }
+
+        void makeOneTimeImageDataTransfer(const Context& instance, const Device& device,
+            const Queue& queue, MappedMemory& stagingMemory, const Buffer& stagingBuffer,
+            Image& image, const PixelData& data, uint32_t dstOffset = 0, 
+            Offset3D dstImageOffset = Offset3D());
 
         const vk::CommandPool& getPool() const { return m_pool; };
     };

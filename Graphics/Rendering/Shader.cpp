@@ -71,13 +71,17 @@ namespace Graphics {
                     uint32_t executionModel = words[i + 1];
 
                     switch (executionModel) {
-                    case 0: return Shader::Type::Vertex;
-                    case 1: return Shader::Type::TessellationControl;
-                    case 2: return Shader::Type::TessellationEvaluation;
-                    case 3: return Shader::Type::Geometry;
-                    case 4: return Shader::Type::Fragment;
-                    case 5: return Shader::Type::Compute;
-                    default: return Shader::Type::Unknown;
+                    case 0:     return Shader::Type::Vertex;
+                    case 1:     return Shader::Type::TessellationControl;
+                    case 2:     return Shader::Type::TessellationEvaluation;
+                    case 3:     return Shader::Type::Geometry;
+                    case 4:     return Shader::Type::Fragment;
+                    case 5:     return Shader::Type::Compute;
+                    case 5267:  return Shader::Type::TaskNV;
+                    case 5364:  return Shader::Type::Task;
+                    case 5268:  return Shader::Type::MeshNV;
+                    case 5365:  return Shader::Type::Mesh;
+                    default:    return Shader::Type::Unknown;
                     }
                 }
                 else return Shader::Type::Unknown;
