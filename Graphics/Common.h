@@ -190,7 +190,7 @@ namespace Graphics {
 
     template<typename StateNew, typename StatePrior, typename Converter>
     static std::vector<StateNew> convert(
-        std::vector<StatePrior> const& prior,
+        const std::vector<StatePrior>& prior,
         Converter&& converter)
     {
         std::vector<StateNew> current(prior.size());
@@ -243,5 +243,4 @@ namespace Graphics {
 
         operator vk::Offset3D() const { return vk::Offset3D{ x, y, z }; }
     };
-
 } // namespace Graphics

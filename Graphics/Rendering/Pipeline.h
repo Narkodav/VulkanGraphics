@@ -126,6 +126,7 @@ namespace Graphics {
             ShaderBundle shaders, const RenderRegion& canvas, const SwapChainFormat& format,
             const VertexDefinitions<VertexDefs...>& vertices,
             const std::vector<const DescriptorSetLayout*>& layouts,
+            const std::vector<PushConstantRange>& pushConstantRanges = {},
             CullMode cullMode = CullMode::Back, FrontFace frontFace = FrontFace::CounterClockwise)
         {
             m_shaders = shaders;
@@ -214,13 +215,17 @@ namespace Graphics {
                 if (layout == nullptr) return vk::DescriptorSetLayout{};
                 return layout->getLayout();
                     });
+            auto rangesRaw = convert<vk::PushConstantRange>
+                (pushConstantRanges, [](const PushConstantRange& range) {
+                return static_cast<vk::PushConstantRange>(range);
+                    });
 
             vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
             pipelineLayoutInfo.sType = vk::StructureType::ePipelineLayoutCreateInfo;
-            pipelineLayoutInfo.setLayoutCount = layoutsRaw.size();  // number of descriptor set layouts
-            pipelineLayoutInfo.pSetLayouts = layoutsRaw.data();  // array of descriptor set layouts
-            pipelineLayoutInfo.pushConstantRangeCount = 0;
-            pipelineLayoutInfo.pPushConstantRanges = nullptr;
+            pipelineLayoutInfo.setLayoutCount = layoutsRaw.size();
+            pipelineLayoutInfo.pSetLayouts = layoutsRaw.data();
+            pipelineLayoutInfo.pushConstantRangeCount = rangesRaw.size();
+            pipelineLayoutInfo.pPushConstantRanges = rangesRaw.data();
 
             try {
                 m_pipelineLayout = device.getDevice()

@@ -142,8 +142,8 @@ namespace Graphics {
 
 	void CommandBuffer::setPipelineBarrier(const Context& instance,
 		Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
-		Buffer& buffer, vk::AccessFlags srcAccess /*= vk::AccessFlagBits::eShaderWrite*/,
-		vk::AccessFlags dstAccess /*= vk::AccessFlagBits::eIndirectCommandRead*/)
+		Buffer& buffer, vk::AccessFlags srcAccess,
+		vk::AccessFlags dstAccess)
 	{
 		vk::BufferMemoryBarrier barrier{};
 		barrier.sType = vk::StructureType::eBufferMemoryBarrier;
@@ -196,7 +196,7 @@ namespace Graphics {
 		size_t vertexCount, size_t instanceCount, size_t firstVertex, size_t firstInstance)
 	{
 		try {
-			m_commandBuffer.draw(3, 1, 0, 0, instance.getDispatchLoader());
+			m_commandBuffer.draw(vertexCount, instanceCount, firstVertex, firstInstance, instance.getDispatchLoader());
 		}
 		catch (const vk::SystemError& e) {
 			throw std::runtime_error("failed to record draw command: " + std::string(e.what()));

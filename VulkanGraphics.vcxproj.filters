@@ -147,6 +147,9 @@
     <ClCompile Include="Graphics\MemoryManagement\PixelData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\MemoryManagement\MemoryPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Common.h">
@@ -287,12 +290,14 @@
     <ClInclude Include="Graphics\MemoryManagement\PixelData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\MemoryManagement\MemoryPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Vendor\imgui\backends\vulkan\glsl_shader.vert" />
     <CustomBuild Include="Shaders\basic.frag" />
     <CustomBuild Include="Vendor\imgui\backends\vulkan\glsl_shader.frag" />
-    <CustomBuild Include="**/*.vert;**/*.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />
     <CustomBuild Include="**/*.vert;**/*.frag" />

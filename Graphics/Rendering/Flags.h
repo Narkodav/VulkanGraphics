@@ -327,10 +327,56 @@ namespace Graphics
         using VulkanFlags = vk::PipelineStageFlagBits;
         using Flags = Flags<PipelineStage>;
     };
-
+    
     template<>
     struct BitTraits<PipelineStage::Bits> {
         using ParentType = PipelineStage;
     };
 
+    struct ShaderStage
+    {
+        enum class Bits : uint32_t {
+            None = 0,
+            Vertex = vk::ShaderStageFlagBits::eVertex,
+            TessellationControl = vk::ShaderStageFlagBits::eTessellationControl,
+            TessellationEvaluation = vk::ShaderStageFlagBits::eTessellationEvaluation,
+            Geometry = vk::ShaderStageFlagBits::eGeometry,
+            Fragment = vk::ShaderStageFlagBits::eFragment,
+            Compute = vk::ShaderStageFlagBits::eCompute,
+            AllGraphics = vk::ShaderStageFlagBits::eAllGraphics,
+            All = vk::ShaderStageFlagBits::eAll,
+            RaygenKHR = vk::ShaderStageFlagBits::eRaygenKHR,
+            AnyHitKHR = vk::ShaderStageFlagBits::eAnyHitKHR,
+            ClosestHitKHR = vk::ShaderStageFlagBits::eClosestHitKHR,
+            MissKHR = vk::ShaderStageFlagBits::eMissKHR,
+            IntersectionKHR = vk::ShaderStageFlagBits::eIntersectionKHR,
+            CallableKHR = vk::ShaderStageFlagBits::eCallableKHR,
+            TaskNV = vk::ShaderStageFlagBits::eTaskNV,
+            MeshNV = vk::ShaderStageFlagBits::eMeshNV,
+            TaskEXT = vk::ShaderStageFlagBits::eTaskEXT,
+            MeshEXT = vk::ShaderStageFlagBits::eMeshEXT
+        };
+
+        using VulkanFlags = vk::ShaderStageFlagBits;
+        using Flags = Flags<ShaderStage>;
+    };
+
+    template<>
+    struct BitTraits<ShaderStage::Bits> {
+        using ParentType = ShaderStage;
+    };
+
+
+    struct PushConstantRange
+    {
+        ShaderStage::Flags stage;
+        uint32_t offset;
+        uint32_t size;
+
+        operator vk::PushConstantRange() const
+        {
+            return vk::PushConstantRange(
+                static_cast<vk::ShaderStageFlagBits>(stage), offset, size);
+        }
+    };
 }

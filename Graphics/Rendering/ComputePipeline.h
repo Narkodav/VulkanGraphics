@@ -25,7 +25,7 @@ namespace Graphics
         ComputePipeline(const Context& instance, const Device& device,
             const Shader& computeShader,
             const std::vector<const DescriptorSetLayout*>& layouts,
-            const std::vector<vk::PushConstantRange>& pushConstantRanges = {})
+            const std::vector<PushConstantRange>& pushConstantRanges = {})
         {
             m_computeShader = &computeShader;
 
@@ -34,13 +34,17 @@ namespace Graphics
                 if (layout == nullptr) return vk::DescriptorSetLayout{};
                 return layout->getLayout();
                     });
+            auto rangesRaw = convert<vk::PushConstantRange>
+                (pushConstantRanges, [](const PushConstantRange& range) {
+                return static_cast<vk::PushConstantRange>(range);
+                    });
 
             vk::PipelineLayoutCreateInfo pipelineLayoutInfo{};
             pipelineLayoutInfo.sType = vk::StructureType::ePipelineLayoutCreateInfo;
             pipelineLayoutInfo.setLayoutCount = layoutsRaw.size();
             pipelineLayoutInfo.pSetLayouts = layoutsRaw.data();
-            pipelineLayoutInfo.pushConstantRangeCount = pushConstantRanges.size();
-            pipelineLayoutInfo.pPushConstantRanges = pushConstantRanges.data();
+            pipelineLayoutInfo.pushConstantRangeCount = rangesRaw.size();
+            pipelineLayoutInfo.pPushConstantRanges = rangesRaw.data();
 
             try {
                 m_pipelineLayout = device.getDevice()

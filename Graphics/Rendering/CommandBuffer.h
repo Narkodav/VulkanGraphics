@@ -78,13 +78,13 @@ namespace Graphics {
         }
         template<size_t bufferAmount>
         void bindVertexBuffers(const Context& instance,
-            std::array<std::reference_wrapper<const Buffer>, bufferAmount> buffers,
+            std::array<const Buffer*, bufferAmount> buffers,
             std::array<vk::DeviceSize, bufferAmount> offsets,
             uint32_t firstBinding = 0)
         {
             auto rawBuffers = convert<vk::Buffer>
-                (buffers, [](std::reference_wrapper<const Buffer> buffer)
-                    { return buffer.get().getBuffer(); });
+                (buffers, [](const Buffer* buffer)
+                    { return buffer->getBuffer(); });
 
             m_commandBuffer.bindVertexBuffers(firstBinding, rawBuffers.size(), rawBuffers.data(),
                 offsets.data(), instance.getDispatchLoader());
@@ -114,8 +114,8 @@ namespace Graphics {
 
         void setPipelineBarrier(const Context& instance,
             Graphics::PipelineStage::Flags srcStage, Graphics::PipelineStage::Flags dstStage,
-            Buffer& buffer, vk::AccessFlags srcAccess = vk::AccessFlagBits::eShaderWrite,
-            vk::AccessFlags dstAccess = vk::AccessFlagBits::eIndirectCommandRead);
+            Buffer& buffer, vk::AccessFlags srcAccess,
+            vk::AccessFlags dstAccess);
 
         void transferBufferData(const Context& instance, const Buffer& srcBuffer,
             const Buffer& dstBuffer, const CopyRegion& copyRegion);
@@ -123,6 +123,23 @@ namespace Graphics {
         void transferImageData(const Context& instance, const Buffer& srcBuffer,
             Image& dstImage, Extent3D imageExtent, size_t offset = 0,
             Offset3D imageOffset = Offset3D());
+
+        template<typename PipelineType>
+        void pushConstants(const Context& instance, const PipelineType& pipeline,
+            ShaderStage::Flags stageFlags, size_t offset, size_t size, const void* values)
+        {
+            try {
+                m_commandBuffer.pushConstants(pipeline.getLayout(),
+                    static_cast<vk::ShaderStageFlagBits>(stageFlags),
+                    offset, size, values, instance.getDispatchLoader());
+            }
+            catch (const vk::SystemError& e) {
+                throw std::runtime_error("Failed to write push constants: " + std::string(e.what()));
+            }
+            catch (const std::exception& e) {
+                throw std::runtime_error("Unexpected error when writing push constants: " + std::string(e.what()));
+            }
+        };
 
         void setRenderView(const Context& instance, const RenderRegion& canvas);
         void draw(const Context& instance,
