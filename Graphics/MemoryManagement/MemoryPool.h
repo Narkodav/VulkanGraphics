@@ -170,6 +170,7 @@ namespace Graphics
 			if (newSize == 0)
 			{
 				free(allocation);
+				allocation = Allocation::getEmptyAllocation();
 				return;
 			}
 
