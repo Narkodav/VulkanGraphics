@@ -11,7 +11,7 @@ namespace Graphics {
 
     void DescriptorSet::write(const Context& instance, const Device& device,
         const Buffer& buffer, uint32_t binding,
-        size_t offset, size_t range)
+        size_t offset, size_t range, size_t arrayElement /*= 0*/)
     {
         vk::DescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = buffer.getBuffer();
@@ -22,7 +22,7 @@ namespace Graphics {
         descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
         descriptorWrite.dstSet = m_set;
         descriptorWrite.dstBinding = binding;
-        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.dstArrayElement = arrayElement;
 
         auto it = m_layout.find(binding);
         if (it == m_layout.end())
@@ -40,7 +40,8 @@ namespace Graphics {
 
     void DescriptorSet::write(const Context& instance, const Device& device,
         const std::vector<Buffer>& buffers, uint32_t binding,
-        const std::vector<size_t>& offsets, const std::vector<size_t>& ranges)
+        const std::vector<size_t>& offsets, const std::vector<size_t>& ranges,
+        size_t arrayElement /*= 0*/)
     {
         std::vector<vk::DescriptorBufferInfo> bufferInfos(buffers.size());
 
@@ -54,7 +55,7 @@ namespace Graphics {
         descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
         descriptorWrite.dstSet = m_set;
         descriptorWrite.dstBinding = binding;
-        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.dstArrayElement = arrayElement;
 
         auto it = m_layout.find(binding);
         if (it == m_layout.end())
@@ -71,7 +72,8 @@ namespace Graphics {
     }
 
     void DescriptorSet::write(const Context& instance, const Device& device,
-        const Image& image, const Sampler& sampler, uint32_t binding)
+        const Image& image, const Sampler& sampler, uint32_t binding,
+        size_t arrayElement /*= 0*/)
     {
         vk::DescriptorImageInfo imageInfo{};
         imageInfo.imageLayout = image.getLayout();
@@ -82,7 +84,7 @@ namespace Graphics {
         descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
         descriptorWrite.dstSet = m_set;
         descriptorWrite.dstBinding = binding;
-        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.dstArrayElement = arrayElement;
 
         auto it = m_layout.find(binding);
         if (it == m_layout.end())
@@ -99,7 +101,8 @@ namespace Graphics {
     }
 
     void DescriptorSet::write(const Context& instance, const Device& device,
-        const std::vector<Image>& images, const std::vector<const Sampler*>& samplers, uint32_t binding)
+        const std::vector<Image>& images, const std::vector<const Sampler*>& samplers, uint32_t binding,
+        size_t arrayElement /*= 0*/)
     {
         std::vector<vk::DescriptorImageInfo>imageInfos(images.size());
 
@@ -113,7 +116,7 @@ namespace Graphics {
         descriptorWrite.sType = vk::StructureType::eWriteDescriptorSet;
         descriptorWrite.dstSet = m_set;
         descriptorWrite.dstBinding = binding;
-        descriptorWrite.dstArrayElement = 0;
+        descriptorWrite.dstArrayElement = arrayElement;
 
         auto it = m_layout.find(binding);
         if (it == m_layout.end())

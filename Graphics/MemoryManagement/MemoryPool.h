@@ -43,6 +43,12 @@ namespace Graphics
 			static Allocation getEmptyAllocation() {
 				return Allocation{ MemoryRegion{ 0, 0 }, 0 };
 			};
+
+			bool operator==(const Allocation& other) {
+				return region.offset == other.region.offset
+					&& region.size == other.region.size
+					&& bufferIndex == other.bufferIndex;
+			}
 		};
 
 		using AllocationSet = std::unordered_set<Allocation, typename Allocation::Hash, typename Allocation::EqualTo>;
@@ -76,7 +82,6 @@ namespace Graphics
 			m_allowConcurrentAccess = allowConcurrentAccess;
 			m_allocatedSizes = std::vector<size_t>();
 			m_allocations = std::vector<AllocationSet>();
-			addBuffer(instance, device);
 			m_initialized = true;
 		}
 
@@ -125,12 +130,10 @@ namespace Graphics
 		~MemoryPool() { assert(!m_initialized && "MemoryPool was not destroyed!"); };
 
 		Allocation allocate(
-			const Context& instance, const Device& device, size_t size)
+			const Context& instance, const Device& device, size_t size, 
+			std::function<void(MemoryType&, Buffer&, size_t)>&& function =
+			[](MemoryType& memory, Buffer& buffer, size_t bufferIndex) {})
 		{
-			size_t rst = size % m_buffers[0].getMemoryRequirements().alignment;
-			if (rst != 0)
-				size += m_buffers[0].getMemoryRequirements().alignment - rst;
-
 			if (size > m_chunkCapacity)
 				throw std::runtime_error("Allocation size exceeds chunk capacity");
 
@@ -145,7 +148,7 @@ namespace Graphics
 					return all;
 				}
 			}
-			addBuffer(instance, device);
+			addBuffer(instance, device, std::move(function));
 			MemoryRegion region = getRegionBestFit(m_buffers.size() - 1, size);
 			Allocation all = Allocation{ region, static_cast<uint32_t>(m_buffers.size() - 1) };
 			m_allocations.back().insert(all);
@@ -153,7 +156,7 @@ namespace Graphics
 			return all;
 		}
 
-		void free(const Allocation& allocation)
+		void free(Allocation& allocation)
 		{
 			if (allocation.region.size == 0)
 				return;
@@ -163,6 +166,7 @@ namespace Graphics
 			freeRegion(allocation.region, allocation.bufferIndex);
 			m_allocatedSizes[allocation.bufferIndex] -= allocation.region.size;
 			m_allocations[allocation.bufferIndex].erase(it);
+			allocation = Allocation::getEmptyAllocation();
 		}
 
 		void shrink(Allocation& allocation, size_t newSize)
@@ -180,12 +184,6 @@ namespace Graphics
 
 			if (allocation.region.size < newSize)
 				throw std::runtime_error("Can't shrink an allocation to a larger size");
-
-			size_t rst = newSize % m_buffers[0].getMemoryRequirements().alignment;
-			if (rst != 0)
-				newSize += m_buffers[0].getMemoryRequirements().alignment - rst;
-			if (newSize == allocation.region.size)
-				return;
 
 			m_allocations[allocation.bufferIndex].erase(it);
 			m_allocatedSizes[allocation.bufferIndex] -= allocation.region.size;
@@ -224,7 +222,10 @@ namespace Graphics
 		}
 
 	private:
-		void addBuffer(const Context& instance, const Device& device)
+
+		void addBuffer(const Context& instance, const Device& device,
+			std::function<void(MemoryType&, Buffer&, size_t)>&& function =
+			[](MemoryType& memory, Buffer& buffer, size_t bufferIndex) {})
 		{
 			Buffer buffer = Buffer(instance, device,
 				m_chunkCapacity, m_usageFlags, m_allowConcurrentAccess);
@@ -237,6 +238,7 @@ namespace Graphics
 			m_freeRegions.push_back(std::list<MemoryRegion>{ MemoryRegion{ 0, m_chunkCapacity } });
 			m_allocations.push_back(AllocationSet());
 			m_allocatedSizes.push_back(0);
+			function(m_memories.back(), m_buffers.back(), m_buffers.size() - 1);
 		}
 
 		MemoryRegion getRegionBestFit(size_t bufferIndex, size_t size)

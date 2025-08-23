@@ -45,6 +45,12 @@ namespace Graphics {
         DescriptorBindingVariableDescriptorCount,
         ShaderSampledImageArrayNonUniformIndexing,
         RuntimeDescriptorArray,                   // Allow variable-sized descriptor arrays
+        DescriptorBindingStorageBufferUpdateAfterBind,
+
+        //Robustness
+        NullDescriptor,
+        RobustBufferAccess,
+        RobustImageAccess,
 
         // Mesh shading
         MeshShaderEXT,
@@ -100,6 +106,7 @@ namespace Graphics {
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::DescriptorBindingVariableDescriptorCount> { using Type = bool; };
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::ShaderSampledImageArrayNonUniformIndexing> { using Type = bool; };
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::RuntimeDescriptorArray> { using Type = bool; };
+    template<> struct DeviceFeatureTypeTrait<DeviceFeature::DescriptorBindingStorageBufferUpdateAfterBind> { using Type = bool; };
 
     // Mesh shading
     template<> struct DeviceFeatureTypeTrait<DeviceFeature::MeshShaderEXT> { using Type = bool; };

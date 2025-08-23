@@ -29,6 +29,7 @@ namespace Graphics {
         vk::PhysicalDeviceTimelineSemaphoreFeatures timelineSemaphoreFeatures;
         vk::PhysicalDeviceUniformBufferStandardLayoutFeatures uniformBufferFeatures;
         vk::PhysicalDeviceVulkanMemoryModelFeatures vulkanMemoryFeatures;
+        vk::PhysicalDeviceRobustness2FeaturesEXT vulkanRobustnesFeaturesEXT;
 
         // Vulkan 1.3 features
         vk::PhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures;
@@ -68,8 +69,9 @@ namespace Graphics {
         shaderSubgroupFeatures.pNext = &timelineSemaphoreFeatures;
         timelineSemaphoreFeatures.pNext = &uniformBufferFeatures;
         uniformBufferFeatures.pNext = &vulkanMemoryFeatures;
+        vulkanMemoryFeatures.pNext = &vulkanRobustnesFeaturesEXT;
 
-        vulkanMemoryFeatures.pNext = &dynamicRenderingFeatures;
+        vulkanRobustnesFeaturesEXT.pNext = &dynamicRenderingFeatures;
         dynamicRenderingFeatures.pNext = &imageRobustnessFeatures;
         imageRobustnessFeatures.pNext = &inlineUniformBlockFeatures;
         inlineUniformBlockFeatures.pNext = &maintenance4Features;
@@ -168,6 +170,18 @@ namespace Graphics {
                 static_cast<bool>(descriptorIndexingFeatures.shaderSampledImageArrayNonUniformIndexing));
             storeFeature(DeviceFeature::RuntimeDescriptorArray,
                 static_cast<bool>(descriptorIndexingFeatures.runtimeDescriptorArray));
+            storeFeature(DeviceFeature::DescriptorBindingStorageBufferUpdateAfterBind,
+                static_cast<bool>(descriptorIndexingFeatures.descriptorBindingStorageBufferUpdateAfterBind));
+        }
+
+        //Robust access
+        {            
+            storeFeature(DeviceFeature::NullDescriptor,
+                static_cast<bool>(vulkanRobustnesFeaturesEXT.nullDescriptor));
+            storeFeature(DeviceFeature::RobustBufferAccess,
+                static_cast<bool>(vulkanRobustnesFeaturesEXT.robustBufferAccess2));
+            storeFeature(DeviceFeature::RobustImageAccess,
+                static_cast<bool>(vulkanRobustnesFeaturesEXT.robustImageAccess2));
         }
 
         //Mesh shader features

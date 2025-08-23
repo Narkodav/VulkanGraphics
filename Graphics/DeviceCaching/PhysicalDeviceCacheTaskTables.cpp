@@ -206,6 +206,43 @@ namespace Graphics {
                     vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
             vkStorageSpecific.runtimeDescriptorArray = std::any_cast<bool>(required);
         },
+        //DescriptorBindingStorageBufferUpdateAfterBind
+            [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceDescriptorIndexingFeatures*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
+            vkStorageSpecific.descriptorBindingStorageBufferUpdateAfterBind = std::any_cast<bool>(required);
+        },
+
+        //Robust access
+
+        //NullDescriptor
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceRobustness2FeaturesEXT*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
+            vkStorageSpecific.nullDescriptor = std::any_cast<bool>(required);
+        },
+
+        //RobustBufferAccess,                   // Allow variable-sized descriptor arrays
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceRobustness2FeaturesEXT*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
+            vkStorageSpecific.robustBufferAccess2 = std::any_cast<bool>(required);
+        },
+
+        //RobustImageAccess
+        [](vk::PhysicalDeviceFeatures2& vkStorage, const std::any& required)
+        {
+            auto& vkStorageSpecific = *static_cast<vk::PhysicalDeviceRobustness2FeaturesEXT*>
+                (getRequiredVkStorage(vkStorage,
+                    vk::StructureType::ePhysicalDeviceDescriptorIndexingFeatures));
+            vkStorageSpecific.robustImageAccess2 = std::any_cast<bool>(required);
+        },
 
         // Mesh shading
 
@@ -257,6 +294,14 @@ namespace Graphics {
 
     const std::array<PhysicalDeviceCache::TaskTableSignature,
         static_cast<size_t>(DeviceFeature::FeaturesNum)> PhysicalDeviceCache::featureChecks = {
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
+            [](const std::any& required, const std::any& available)
+        { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
             [](const std::any& required, const std::any& available)
         { return std::any_cast<bool>(required) == std::any_cast<bool>(available); },
             [](const std::any& required, const std::any& available)
